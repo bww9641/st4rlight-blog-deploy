@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en" data-theme="auto">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: https://pbs.twimg.com https://abs.twimg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net data:; script-src 'self' https://cdn.jsdelivr.net https://platform.twitter.com; connect-src 'self' https://platform.twitter.com https://syndication.twitter.com https://cdn.syndication.twimg.com https://nitter.net; frame-src https://platform.twitter.com https://syndication.twitter.com https://nitter.net; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; upgrade-insecure-requests">
+<title>[V8 Study] 00-introduction | st4rlight</title>
+<meta name="description" content="An introductory V8 study note that explains engine structure, JIT compilation flow, and optimization/deoptimization concepts from a beginner-friendly security research perspective.">
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="alternate" type="application/atom+xml" title="st4rlight Feed" href="/feed.xml">
+<link rel="icon" href="/assets/img/og-default.svg">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>[V8 Study] 00-introduction | st4rlight</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="[V8 Study] 00-introduction" />
+<meta name="author" content="st4rlight" />
+<meta property="og:locale" content="en" />
+<meta name="description" content="An introductory V8 study note that explains engine structure, JIT compilation flow, and optimization/deoptimization concepts from a beginner-friendly security research perspective." />
+<meta property="og:description" content="An introductory V8 study note that explains engine structure, JIT compilation flow, and optimization/deoptimization concepts from a beginner-friendly security research perspective." />
+<link rel="canonical" href="https://st4rlight.github.io/research/2022/05/17/V8-introduction/" />
+<meta property="og:url" content="https://st4rlight.github.io/research/2022/05/17/V8-introduction/" />
+<meta property="og:site_name" content="st4rlight" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2022-05-17T16:30:00+09:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="[V8 Study] 00-introduction" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"st4rlight"},"dateModified":"2022-05-17T16:30:00+09:00","datePublished":"2022-05-17T16:30:00+09:00","description":"An introductory V8 study note that explains engine structure, JIT compilation flow, and optimization/deoptimization concepts from a beginner-friendly security research perspective.","headline":"[V8 Study] 00-introduction","mainEntityOfPage":{"@type":"WebPage","@id":"https://st4rlight.github.io/research/2022/05/17/V8-introduction/"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"https://st4rlight.github.io/assets/img/og-default.svg"},"name":"st4rlight"},"url":"https://st4rlight.github.io/research/2022/05/17/V8-introduction/"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+  </head>
+  <body data-line-numbers="false">
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <header class="site-header">
+  <div class="shell header-shell">
+    <a class="brand" href="/" aria-label="Go to home">
+      <span class="brand-mark">Hacky</span>
+      <span class="brand-text">Life &amp; Writeup</span>
+    </a>
+    <nav class="main-nav" aria-label="Primary">
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="menu-list">Menu</button>
+      <ul id="menu-list">
+        
+          
+          
+          
+            <li><a href="/" >Home</a></li>
+          
+        
+          
+          
+          
+            <li><a href="/about/" >About</a></li>
+          
+        
+          
+          
+          
+            <li><a href="/timeline/" >Timeline</a></li>
+          
+        
+          
+          
+          
+            <li><a href="/posts/" >Posts</a></li>
+          
+        
+          
+          
+          
+            <li><a href="/search/" >Search</a></li>
+          
+        
+      </ul>
+    </nav>
+    <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle color theme">Theme</button>
+  </div>
+</header>
+
+    <main id="main-content" class="site-main">
+      <article class="shell post-shell" itemscope itemtype="https://schema.org/Article">
+  <header class="post-header">
+    <p class="eyebrow">note</p>
+    <h1 itemprop="headline">[V8 Study] 00-introduction</h1>
+    <p class="post-description" itemprop="description">An introductory V8 study note that explains engine structure, JIT compilation flow, and optimization/deoptimization concepts from a beginner-friendly security research perspective.</p>
+    <p class="post-meta">
+      <time datetime="2022-05-17T16:30:00+09:00" itemprop="datePublished">2022-05-17</time>
+      <span> · updated 2022-05-17</span>
+      
+    </p>
+    
+      <ul class="chip-list">
+        
+          <li><a href="/tags/#tag-study">#study</a></li>
+        
+      </ul>
+    
+    
+  </header>
+
+  <div class="post-body-wrap">
+    <div class="post-content js-article" itemprop="articleBody">
+      <p><strong>[!] 우선적으로 한글로 작성하여 추후 번역할 예정.</strong></p>
+
+<h2 id="summary">Summary</h2>
+<p>우리가 대중적으로 사용하는 Google Chrome browser에는 웹페이지를 동적으로 실행시키기 위해 javascript가 구동될 수 있도록 지원하고 있다. 그렇다면, JS를 원활하게 실행하고 컴파일하는 역할은 어떤 것이 맡고 있을까? 이 챕터에서는 내가 공부했던 chromium javascript engine인 V8에 대해서 알아보고자 한다.</p>
+
+<h2 id="v8의-구조는-어떻게-되어-있을까">V8의 구조는 어떻게 되어 있을까?</h2>
+
+<p>V8같은 경우 Chrome 구동 시 하나의 프로세스로 실행되어 heap 및 stack 메모리 영역을 관리하면서 Javascript의 각종 변수와 메소드를 실행하는 가장 핵심적인 execution file로 동작한다. 이외에 Task/Callback queue, Microtask queue, WebAPI 등 다양한 요소가 Chromium browser를 구성하고 동작하는데 사용된다.</p>
+
+<p>가장 대표적인 역할은 javascript 코드를 컴파일된 컴퓨터에 최적화된 코드로 변환시켜 전달하게 된다는 것이다. 이때 <code class="language-plaintext highlighter-rouge">JIT(Just-In-Time) Compiler</code>라는 독창적인 컴파일러를 사용한다.</p>
+
+<h2 id="v8만의-특징은-무엇이-있을까">V8만의 특징은 무엇이 있을까?</h2>
+<p><img src="/assets/img/legacy/2022-V8/intro/inter-comp.png" alt="inter-comp.png" /></p>
+
+<p>우선 인터프리터와 컴파일러에 대해 알아야 할 것이다.</p>
+<ol>
+  <li>인터프리터
+    <ul>
+      <li>장점 : 한 줄 한 줄 변환하기 때문에 실행 속도가 빠르다.</li>
+      <li>단점 : 자바스크립트 코드가 복잡해질수록 점점 속도가 느려진다. 예를 들어, 같은 코드를 여러차례 반복하는 반복문의 경우, 같은 결과를 반복하는 것임에도 불구하고 코드를 한 줄 한 줄 읽는 방식에 의해 그때그때 실행된다.</li>
+    </ul>
+  </li>
+  <li>컴파일러
+    <ul>
+      <li>장점 : 파일 전체를 한번에 읽어서 컴파일러는 작업을 단순화시킨다. 예를 들어 특정 함수를 10억번 반복해야 할 경우, 컴파일 과정에서 함수를 반복하는 것이 아니라 함수의 결과물을 반복하도록 컴파일 한다. 이처럼 불필요한 동작을 제거하는 컴파일러의 방식을 최적화, <code class="language-plaintext highlighter-rouge">optimization</code>이라고 한다.  <br />
+(<em>인터프리터는 optimize하지 않는다</em> )</li>
+      <li>단점 : 코드를 바로 실행하지 않고, 코드 실행 전 전체를 컴파일 하는 과정이 필요하기 때문에 초기에 속도가 느릴 수 밖에 없다.</li>
+    </ul>
+  </li>
+</ol>
+
+<p>자바스크립트 엔진의 내부를 공부하다가 잠시 인터프리터와 컴파일러의 간단한 개념과 장단점을 짚어봤다. 그러면 과연 V8 엔진은 어떤 방식을 취했길래 다른 자바스크립트 엔진보다 더 빠르고 효율적으로 자바스크립트 명령을 수행할 수 있을까? 바로 여기에서 V8 엔진의 독특한 언어 변환 도구인 JIT Compiler가 들어온다. JIT은 Just In Time의 약자이다.</p>
+
+<h2 id="jit-compiler의-구조">JIT Compiler의 구조</h2>
+<p><img src="/assets/img/legacy/2022-V8/intro/jit.png" alt="jit.png" /></p>
+
+<p>V8 엔진은 다음과 같은 구조로 되어 있다.</p>
+<ol>
+  <li><code class="language-plaintext highlighter-rouge">Parser</code> : 코드를 Lexical Analysis라는 과정을 통해 <strong>토큰</strong>으로 분해한다.</li>
+  <li><code class="language-plaintext highlighter-rouge">AST(Abstract Syntax Tree)</code> : Parser에서 분해된 토큰을 바탕으로 추상적인 트리를 생성한다.</li>
+  <li><code class="language-plaintext highlighter-rouge">Ignition</code> : AST에서 나온 트리를 V8의 인터프리터인 ignition에게 전달하고 이것을 인터프리터는 bytecode로 변환시킨다. (High-level Lang to Low-level Lang)</li>
+  <li><code class="language-plaintext highlighter-rouge">TurboFan</code>, <code class="language-plaintext highlighter-rouge">Profiler</code> : bytecode를 실행하여 Human-readable Lang을 실행시키고, 그중 자주 사용되는 코드라고 판별된 코드 조각은 <code class="language-plaintext highlighter-rouge">TurboFan</code>으로 보내져 최적화를 수행하여 새로운 컴파일된 코드로 재구성된다. (이때 자주 사용되는 코드라는 말이 매우 추상적이므로 <code class="language-plaintext highlighter-rouge">Profiler</code> 라는 친구한테 사용 빈도 수 등을 수집하게끔 역할을 부여하고, 모인 데이터를 통해 Turbofan의 알고리즘대로 최적화를 한다)</li>
+</ol>
+
+<h2 id="turbofan은-어떤-조건으로-최적화하는-걸까">Turbofan은 어떤 조건으로 최적화하는 걸까?</h2>
+<ol>
+  <li>
+    <p>코드가 뜨겁고 안정적인 것, 쉽게 말하면 자주 호출되고(뜨겁고) 코드가 안 변함(안정적)이라는 것이다. 매번 같은 행동을 수행하는 반복문 내에 있는 코드 같은 경우가 여기에 해당하기 쉽다.</p>
+  </li>
+  <li>
+    <p>인터프리팅된 바이트 코드의 길이를 보고 특정 임계점을 넘기지 않으면 작은 함수라고 판단해서 최적화를 진행하는 것이다. 작고 단순한 함수는 크고 복잡한 함수보다 동작이 매우 추상적이거나 제한적인 확률이 높기 때문에 안정적이라고 볼 수 있다.</p>
+  </li>
+</ol>
+
+<p>[!] 그러나, 컴파일러는 100% 완벽하지 못하기 때문에 의도와 다르게 발적화(deoptimization)가 일어날 수도 있다.</p>
+
+<h2 id="next-topic">Next Topic</h2>
+<p>다음에는 V8에서 자료형이나 JS의 다양한 메소드가 어떤 식으로 저장이 되고 불러올 수 있는지를 알아보고자 한다.</p>
+
+<h2 id="reference">reference</h2>
+<ul>
+  <li><a href="https://dkwjdi.tistory.com/194">https://dkwjdi.tistory.com/194</a></li>
+  <li><a href="https://github.com/danbev/learning-v8/blob/master/notes/intro.md">https://github.com/danbev/learning-v8/blob/master/notes/intro.md</a></li>
+</ul>
+
+    </div>
+    
+      <aside class="toc-shell js-toc-shell" aria-label="Table of contents">
+        <button class="toc-toggle" type="button" aria-expanded="false" aria-controls="toc-list">On this page</button>
+        <nav id="toc-list" class="js-toc"></nav>
+      </aside>
+    
+  </div>
+
+  
+
+  
+
+
+
+<section class="related-posts">
+  <h2>Related</h2>
+  <div class="card-grid">
+    
+      <article class="post-card">
+  <h3><a href="/research/2021/10/27/web-note-update/">web note (update 2021.10.27)</a></h3>
+  <p>A frequently updated web exploitation note that collects practical SSTI, SQL injection, and deserialization payload patterns with short examples fo...</p>
+  <p class="meta">2021-10-27</p>
+  
+    <ul class="chip-list">
+      
+        <li><a href="/tags/#tag-study">#study</a></li>
+      
+    </ul>
+  
+</article>
+
+    
+  </div>
+</section>
+
+
+
+  
+  
+</article>
+
+    </main>
+    <footer class="site-footer">
+  <div class="shell footer-shell">
+    <p>be the special st4rlight in the world</p>
+    <ul class="footer-links">
+      
+        
+        
+        
+          <li><a href="https://github.com/st4rlight">GitHub</a></li>
+        
+      
+        
+        
+        
+          <li><a href="mailto:bww9643@gmail.com">Email</a></li>
+        
+      
+        
+        
+        
+          <li><a href="https://ainsetin.notion.site/Ainsetin-s-Write-up-c1a0fb95760b41508d54ce94dc3601c5">Notion</a></li>
+        
+      
+    </ul>
+  </div>
+</footer>
+
+
+    
+      <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js" defer></script>
+    
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css">
+      <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js" defer></script>
+      <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" defer></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/lib/common.min.js" defer></script>
+    <script src="/assets/js/main.js" defer></script>
+  </body>
+</html>

