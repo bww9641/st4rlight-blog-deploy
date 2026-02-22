@@ -1580,6 +1580,23 @@ html[data-theme=dark] .award-phase {
     height: 7.2rem;
     justify-self: start;
   }
+  .footer-shell {
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 0.6rem;
+  }
+  .footer-shell p {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    flex: 1 1 100%;
+  }
+  .footer-links {
+    flex-wrap: wrap;
+    white-space: normal;
+    gap: 0.55rem 0.75rem;
+    justify-content: flex-start;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   .site-main,
