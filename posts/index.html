@@ -25,7 +25,7 @@
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="Posts" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebPage","author":{"@type":"Person","name":"st4rlight"},"dateModified":"2026-02-23T05:00:09+09:00","description":"All posts in one place with simple Research / Study / Life tag filtering.","headline":"Posts","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"https://st4rlight.github.io/assets/img/og-default.svg"},"name":"st4rlight"},"url":"https://st4rlight.github.io/posts/"}</script>
+{"@context":"https://schema.org","@type":"WebPage","author":{"@type":"Person","name":"st4rlight"},"dateModified":"2026-03-01T12:30:22+09:00","description":"All posts in one place with simple Research / Study / Life tag filtering.","headline":"Posts","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"https://st4rlight.github.io/assets/img/og-default.svg"},"name":"st4rlight"},"url":"https://st4rlight.github.io/posts/"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -85,23 +85,30 @@
     <p>All posts in one place with simple Research / Study / Life tag filtering.</p>
   </header>
   <div class="page-content">
-    <section class="section-block">
-  <p>Filter by focus:</p>
-  <p class="quick-links">
-    <button type="button" class="theme-toggle" data-post-filter="all" aria-pressed="true">All</button>
-    <button type="button" class="theme-toggle" data-post-filter="research" aria-pressed="false">Research</button>
-    <button type="button" class="theme-toggle" data-post-filter="study" aria-pressed="false">Study</button>
-    <button type="button" class="theme-toggle" data-post-filter="life" aria-pressed="false">Life</button>
-    <button type="button" class="theme-toggle" id="posts-other-toggle" aria-expanded="false" aria-controls="posts-other-tags">Other tags</button>
-  </p>
+    <section class="section-block post-controls">
+  <div class="post-filter-row">
+    <button type="button" class="post-filter-btn" data-post-filter="all" aria-pressed="true">All</button>
+    <button type="button" class="post-filter-btn" data-post-filter="research" aria-pressed="false">Research</button>
+    <button type="button" class="post-filter-btn" data-post-filter="study" aria-pressed="false">Study</button>
+    <button type="button" class="post-filter-btn" data-post-filter="life" aria-pressed="false">Life</button>
+    <button type="button" class="post-filter-btn" data-post-filter="etc" aria-pressed="false">etc</button>
+    <button type="button" class="post-filter-btn post-filter-btn--subtle" id="posts-other-toggle" aria-expanded="false" aria-controls="posts-other-tags">Tags</button>
+  </div>
   <div id="posts-other-tags" class="posts-other-tags" hidden=""></div>
-  <input id="posts-search" type="search" placeholder="Search title, description, tags" />
+  <div class="post-search-row">
+    <input id="posts-search" type="search" placeholder="Search title, description, tags" />
+    <div class="post-view-toggle" id="posts-view-toggle">
+      <button type="button" class="post-view-seg" data-view-val="card" aria-pressed="true">Card</button>
+      <button type="button" class="post-view-seg" data-view-val="list" aria-pressed="false">List</button>
+    </div>
+  </div>
 </section>
 
+<nav id="posts-pagination-top" class="posts-pagination" aria-label="Posts pagination (top)"></nav>
 <section id="posts-grid" class="card-grid section-block">
   
-    <article class="post-card js-post-card" data-tags="life" data-search="근황 A personal status update reflecting on recent work, burnout, motivation, and the direction of future technical writing and security research focus. life">
-      <h3><a href="/research/2024/11/02/%EA%B7%BC%ED%99%A9/">근황</a></h3>
+    <article class="post-card js-post-card" data-tags="life" data-date="2024-11-02" data-search="근황 A personal status update reflecting on recent work, burnout, motivation, and the direction of future technical writing and security research focus. life">
+      <h3><a href="/life/2024/11/02/%EA%B7%BC%ED%99%A9/">근황</a></h3>
       <p>A personal status update reflecting on recent work, burnout, motivation, and the direction of future technical writing and security research focus.</p>
       <p class="meta">2024-11-02</p>
       
@@ -113,7 +120,7 @@
       
     </article>
   
-    <article class="post-card js-post-card" data-tags="research ctf writeup" data-search="CTF Write-up [test] CTF writeup covering challenge analysis, exploit/reversing flow, and key takeaways. research ctf writeup">
+    <article class="post-card js-post-card" data-tags="research ctf writeup" data-date="2024-07-19" data-search="CTF Write-up [test] CTF writeup covering challenge analysis, exploit/reversing flow, and key takeaways. research ctf writeup">
       <h3><a href="/research/2024/07/19/ctf_test/">CTF Write-up [test]</a></h3>
       <p>CTF writeup covering challenge analysis, exploit/reversing flow, and key takeaways.</p>
       <p class="meta">2024-07-19</p>
@@ -130,7 +137,7 @@
       
     </article>
   
-    <article class="post-card js-post-card" data-tags="research ctf writeup" data-search="HTB Business CTF 2022 : Dirty Money write-up (in progress) CTF writeup covering challenge analysis, exploit/reversing flow, and key takeaways. research ctf writeup">
+    <article class="post-card js-post-card" data-tags="research ctf writeup" data-date="2022-07-18" data-search="HTB Business CTF 2022 : Dirty Money write-up (in progress) CTF writeup covering challenge analysis, exploit/reversing flow, and key takeaways. research ctf writeup">
       <h3><a href="/research/2022/07/18/htb_businessctf_2022/">HTB Business CTF 2022 : Dirty Money write-up (in progress)</a></h3>
       <p>CTF writeup covering challenge analysis, exploit/reversing flow, and key takeaways.</p>
       <p class="meta">2022-07-18</p>
@@ -147,8 +154,8 @@
       
     </article>
   
-    <article class="post-card js-post-card" data-tags="study" data-search="[V8 Study] 00-introduction An introductory V8 study note that explains engine structure, JIT compilation flow, and optimization/deoptimization concepts from a beginner-friendly security research perspective. study">
-      <h3><a href="/research/2022/05/17/V8-introduction/">[V8 Study] 00-introduction</a></h3>
+    <article class="post-card js-post-card" data-tags="study" data-date="2022-05-17" data-search="[V8 Study] 00-introduction An introductory V8 study note that explains engine structure, JIT compilation flow, and optimization/deoptimization concepts from a beginner-friendly security research perspective. study">
+      <h3><a href="/study/2022/05/17/V8-introduction/">[V8 Study] 00-introduction</a></h3>
       <p>An introductory V8 study note that explains engine structure, JIT compilation flow, and optimization/deoptimization concepts from a beginner-friend...</p>
       <p class="meta">2022-05-17</p>
       
@@ -160,8 +167,8 @@
       
     </article>
   
-    <article class="post-card js-post-card" data-tags="life" data-search="Personal R&amp;D plan beginning from 'now' A long-term personal R&amp;D roadmap after graduation, covering research priorities, skill-building plans, and concrete goals tracked through periodic updates. life">
-      <h3><a href="/research/2021/11/08/list-after-graduate/">Personal R&amp;D plan beginning from 'now'</a></h3>
+    <article class="post-card js-post-card" data-tags="life" data-date="2021-11-08" data-search="Personal R&amp;D plan beginning from 'now' A long-term personal R&amp;D roadmap after graduation, covering research priorities, skill-building plans, and concrete goals tracked through periodic updates. life">
+      <h3><a href="/life/2021/11/08/list-after-graduate/">Personal R&amp;D plan beginning from 'now'</a></h3>
       <p>A long-term personal R&amp;D roadmap after graduation, covering research priorities, skill-building plans, and concrete goals tracked through periodic ...</p>
       <p class="meta">2021-11-08</p>
       
@@ -173,8 +180,8 @@
       
     </article>
   
-    <article class="post-card js-post-card" data-tags="study" data-search="web note (update 2021.10.27) A frequently updated web exploitation note that collects practical SSTI, SQL injection, and deserialization payload patterns with short examples for quick reference. study">
-      <h3><a href="/research/2021/10/27/web-note-update/">web note (update 2021.10.27)</a></h3>
+    <article class="post-card js-post-card" data-tags="study" data-date="2021-10-27" data-search="web note (update 2021.10.27) A frequently updated web exploitation note that collects practical SSTI, SQL injection, and deserialization payload patterns with short examples for quick reference. study">
+      <h3><a href="/study/2021/10/27/web-note-update/">web note (update 2021.10.27)</a></h3>
       <p>A frequently updated web exploitation note that collects practical SSTI, SQL injection, and deserialization payload patterns with short examples fo...</p>
       <p class="meta">2021-10-27</p>
       
@@ -186,8 +193,8 @@
       
     </article>
   
-    <article class="post-card js-post-card" data-tags="life hello world" data-search="Start Again A reboot post for my personal blog, including the initial setup direction and small math examples while defining how I want to document future research and learning. life hello world">
-      <h3><a href="/research/2021/10/15/start-again/">Start Again</a></h3>
+    <article class="post-card js-post-card" data-tags="life hello world" data-date="2021-10-15" data-search="Start Again A reboot post for my personal blog, including the initial setup direction and small math examples while defining how I want to document future research and learning. life hello world">
+      <h3><a href="/life/2021/10/15/start-again/">Start Again</a></h3>
       <p>A reboot post for my personal blog, including the initial setup direction and small math examples while defining how I want to document future rese...</p>
       <p class="meta">2021-10-15</p>
       
@@ -203,7 +210,7 @@
       
     </article>
   
-    <article class="post-card js-post-card" data-tags="research ctf writeup web reversing algorithm" data-search="2021 redpwnCTF write-up CTF writeup covering challenge analysis, exploit/reversing flow, and key takeaways. research ctf writeup web reversing algorithm">
+    <article class="post-card js-post-card" data-tags="research ctf writeup web reversing algorithm" data-date="2021-07-13" data-search="2021 redpwnCTF write-up CTF writeup covering challenge analysis, exploit/reversing flow, and key takeaways. research ctf writeup web reversing algorithm">
       <h3><a href="/research/2021/07/13/redpwn_2021_rev_web/">2021 redpwnCTF write-up</a></h3>
       <p>CTF writeup covering challenge analysis, exploit/reversing flow, and key takeaways.</p>
       <p class="meta">2021-07-13</p>
@@ -226,7 +233,7 @@
       
     </article>
   
-    <article class="post-card js-post-card" data-tags="research ctf writeup" data-search="2021 thcctf write-up CTF writeup covering challenge analysis, exploit/reversing flow, and key takeaways. research ctf writeup">
+    <article class="post-card js-post-card" data-tags="research ctf writeup" data-date="2021-06-14" data-search="2021 thcctf write-up CTF writeup covering challenge analysis, exploit/reversing flow, and key takeaways. research ctf writeup">
       <h3><a href="/research/2021/06/14/thcctf_2021_pwn_rev/">2021 thcctf write-up</a></h3>
       <p>CTF writeup covering challenge analysis, exploit/reversing flow, and key takeaways.</p>
       <p class="meta">2021-06-14</p>
@@ -243,7 +250,7 @@
       
     </article>
   
-    <article class="post-card js-post-card" data-tags="research ctf writeup" data-search="2021 dctf write-up CTF writeup covering challenge analysis, exploit/reversing flow, and key takeaways. research ctf writeup">
+    <article class="post-card js-post-card" data-tags="research ctf writeup" data-date="2021-05-17" data-search="2021 dctf write-up CTF writeup covering challenge analysis, exploit/reversing flow, and key takeaways. research ctf writeup">
       <h3><a href="/research/2021/05/17/dctf_2021_just_another_heap/">2021 dctf write-up</a></h3>
       <p>CTF writeup covering challenge analysis, exploit/reversing flow, and key takeaways.</p>
       <p class="meta">2021-05-17</p>
@@ -261,7 +268,8 @@
     </article>
   
 </section>
-<nav id="posts-pagination" class="posts-pagination section-block" aria-label="Posts pagination"></nav>
+<section id="posts-list" hidden=""></section>
+<nav id="posts-pagination" class="posts-pagination" aria-label="Posts pagination"></nav>
 
   </div>
 </section>

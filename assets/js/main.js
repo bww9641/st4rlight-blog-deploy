@@ -17,7 +17,7 @@
   function applyTheme(theme) {
     document.documentElement.setAttribute("data-theme", theme);
     const button = document.getElementById("theme-toggle");
-    if (button) button.textContent = theme === "dark" ? "Light" : "Dark";
+    if (button) button.textContent = theme === "dark" ? "Dark" : "Light";
   }
 
   function setupThemeToggle() {
@@ -312,55 +312,63 @@
     const searchInput = document.getElementById("posts-search");
     const otherToggle = document.getElementById("posts-other-toggle");
     const otherTagsWrap = document.getElementById("posts-other-tags");
+    const paginationTop = document.getElementById("posts-pagination-top");
     const paginationRoot = document.getElementById("posts-pagination");
-    const cards = document.querySelectorAll(".js-post-card");
+    const cardGrid = document.getElementById("posts-grid");
+    const listRoot = document.getElementById("posts-list");
+    const viewToggle = document.getElementById("posts-view-toggle");
+    const cards = Array.from(document.querySelectorAll(".js-post-card"));
     if (!cards.length) return;
 
-    const PAGE_SIZE = 8;
-    let selected = "all";
-    let selectedOther = "all";
+    const CARD_PAGE_SIZE = 8;
+    const LIST_PAGE_SIZE = 10;
+    const VIEW_KEY = "st4-view";
+    const MAIN_CATS = new Set(["research", "study", "life"]);
+    const ALL_CATS = ["research", "study", "life", "etc"];
+    let selectedCats = new Set();
+    let selectedTags = new Set();
     let query = "";
     let page = 1;
+    let viewMode = localStorage.getItem(VIEW_KEY) === "list" ? "list" : "card";
 
+    /* ── number map: oldest post = 1 ── */
+    const sorted = [...cards].sort((a, b) => (a.dataset.date || "").localeCompare(b.dataset.date || ""));
+    const numberMap = new Map();
+    sorted.forEach((card, i) => numberMap.set(card, i + 1));
+
+    /* ── other-tag discovery ── */
     function getOtherTags() {
-      const focus = new Set(["research", "study", "life"]);
       const tags = new Set();
       cards.forEach((card) => {
-        (card.dataset.tags || "")
-          .toLowerCase()
-          .split(/\s+/)
-          .filter(Boolean)
-          .forEach((tag) => {
-            if (!focus.has(tag)) tags.add(tag);
-          });
+        (card.dataset.tags || "").toLowerCase().split(/\s+/).filter(Boolean).forEach((t) => {
+          if (!MAIN_CATS.has(t)) tags.add(t);
+        });
       });
       return Array.from(tags).sort();
     }
 
+    /* ── render tag sub-buttons ── */
     function renderOtherTags() {
       if (!otherTagsWrap) return;
       const otherTags = getOtherTags();
-      if (!otherTags.length) {
-        otherTagsWrap.innerHTML = "";
-        return;
-      }
-
+      if (!otherTags.length) { otherTagsWrap.innerHTML = ""; return; }
       otherTagsWrap.innerHTML = "";
+
       const allBtn = document.createElement("button");
       allBtn.type = "button";
-      allBtn.className = "theme-toggle";
-      allBtn.textContent = "All other";
+      allBtn.className = "post-tag-btn";
+      allBtn.textContent = "All";
       allBtn.dataset.postOtherTag = "all";
-      allBtn.setAttribute("aria-pressed", String(selectedOther === "all"));
+      allBtn.setAttribute("aria-pressed", String(selectedTags.size === 0));
       otherTagsWrap.appendChild(allBtn);
 
       otherTags.forEach((tag) => {
         const btn = document.createElement("button");
         btn.type = "button";
-        btn.className = "theme-toggle";
-        btn.textContent = `#${tag}`;
+        btn.className = "post-tag-btn";
+        btn.textContent = "#" + tag;
         btn.dataset.postOtherTag = tag;
-        btn.setAttribute("aria-pressed", String(selectedOther === tag));
+        btn.setAttribute("aria-pressed", String(selectedTags.has(tag)));
         otherTagsWrap.appendChild(btn);
       });
 
@@ -368,7 +376,13 @@
         if (btn.dataset.bound === "1") return;
         btn.dataset.bound = "1";
         btn.addEventListener("click", () => {
-          selectedOther = (btn.dataset.postOtherTag || "all").toLowerCase();
+          const tag = btn.dataset.postOtherTag;
+          if (tag === "all") {
+            selectedTags.clear();
+          } else {
+            selectedTags.has(tag) ? selectedTags.delete(tag) : selectedTags.add(tag);
+            if (selectedTags.size >= otherTags.length) selectedTags.clear();
+          }
           page = 1;
           renderOtherTags();
           apply();
@@ -376,94 +390,214 @@
       });
     }
 
-    function renderPagination(total, current) {
-      if (!paginationRoot) return;
-      const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
-      paginationRoot.innerHTML = "";
-      if (total <= PAGE_SIZE) return;
+    /* ── update category button states ── */
+    function updateCatButtons() {
+      controls.forEach((btn) => {
+        const f = (btn.dataset.postFilter || "all").toLowerCase();
+        if (f === "all") {
+          btn.setAttribute("aria-pressed", String(selectedCats.size === 0));
+        } else {
+          btn.setAttribute("aria-pressed", String(selectedCats.has(f)));
+        }
+      });
+    }
+
+    /* ── pagination ── */
+    function buildPaginationButtons(container, total, current, pageSize, alwaysShow) {
+      container.innerHTML = "";
+      const totalPages = Math.max(1, Math.ceil(total / pageSize));
+      if (!alwaysShow && total <= pageSize) return;
 
       const prev = document.createElement("button");
       prev.type = "button";
-      prev.className = "theme-toggle";
+      prev.className = "post-page-btn";
       prev.textContent = "Prev";
       prev.disabled = current <= 1;
-      prev.addEventListener("click", () => {
-        page = Math.max(1, page - 1);
-        apply();
-      });
-      paginationRoot.appendChild(prev);
+      prev.addEventListener("click", () => { page = Math.max(1, page - 1); apply(); });
+      container.appendChild(prev);
 
       for (let i = 1; i <= totalPages; i += 1) {
         const btn = document.createElement("button");
         btn.type = "button";
-        btn.className = "theme-toggle";
+        btn.className = "post-page-btn";
         btn.textContent = String(i);
         btn.setAttribute("aria-current", i === current ? "page" : "false");
-        btn.setAttribute("aria-pressed", i === current ? "true" : "false");
-        btn.addEventListener("click", () => {
-          page = i;
-          apply();
-        });
-        paginationRoot.appendChild(btn);
+        btn.addEventListener("click", () => { page = i; apply(); });
+        container.appendChild(btn);
       }
 
       const next = document.createElement("button");
       next.type = "button";
-      next.className = "theme-toggle";
+      next.className = "post-page-btn";
       next.textContent = "Next";
       next.disabled = current >= totalPages;
-      next.addEventListener("click", () => {
-        page = Math.min(totalPages, page + 1);
-        apply();
-      });
-      paginationRoot.appendChild(next);
+      next.addEventListener("click", () => { page = Math.min(totalPages, page + 1); apply(); });
+      container.appendChild(next);
     }
 
+    function renderPagination(total, current, pageSize, alwaysShow) {
+      [paginationTop, paginationRoot].forEach((el) => {
+        if (el) buildPaginationButtons(el, total, current, pageSize, alwaysShow);
+      });
+    }
+
+    /* ── list view ── */
+    function renderListView(matched) {
+      if (!listRoot) return;
+      listRoot.innerHTML = "";
+      var table = document.createElement("table");
+      table.className = "posts-list-table";
+      var thead = document.createElement("thead");
+      thead.innerHTML = "<tr><th>#</th><th>Title</th><th>Category</th><th>Date</th></tr>";
+      table.appendChild(thead);
+      var tbody = document.createElement("tbody");
+
+      matched.forEach((card) => {
+        var num = numberMap.get(card) || 0;
+        var titleEl = card.querySelector("h3 a");
+        var title = titleEl ? titleEl.textContent : "";
+        var url = titleEl ? titleEl.getAttribute("href") : "#";
+        var date = card.dataset.date || "";
+        var tagList = (card.dataset.tags || "").toLowerCase().split(/\s+/).filter(Boolean);
+        var mainCat = tagList.find((t) => MAIN_CATS.has(t)) || "etc";
+
+        var tr = document.createElement("tr");
+        tr.innerHTML =
+          '<td class="list-num">' + num + "</td>" +
+          '<td class="list-title"><a href="' + url + '">' + title + "</a></td>" +
+          '<td class="list-cat"><span class="list-cat-badge list-cat-' + mainCat + '">' + mainCat + "</span></td>" +
+          '<td class="list-date">' + date + "</td>";
+        tbody.appendChild(tr);
+      });
+
+      table.appendChild(tbody);
+      listRoot.appendChild(table);
+    }
+
+    /* ── empty state ── */
+    var emptyEl = document.getElementById("posts-empty");
+    if (!emptyEl && cardGrid) {
+      emptyEl = document.createElement("div");
+      emptyEl.id = "posts-empty";
+      emptyEl.className = "posts-empty section-block";
+      emptyEl.hidden = true;
+      emptyEl.innerHTML = '<strong>No posts found</strong><p>Try adjusting filters or search query.</p>';
+      cardGrid.parentNode.insertBefore(emptyEl, cardGrid.nextSibling);
+    }
+
+    /* ── main filter logic ── */
     function apply() {
-      const matched = [];
+      var matched = [];
       cards.forEach((card) => {
-        const tags = (card.dataset.tags || "").toLowerCase();
-        const searchable = (card.dataset.search || "").toLowerCase();
-        const tagOk = selected === "all" || tags.includes(selected);
-        const otherOk = selectedOther === "all" || tags.split(/\s+/).includes(selectedOther);
-        const queryOk = !query || searchable.includes(query);
-        const ok = tagOk && otherOk && queryOk;
-        if (ok) matched.push(card);
+        var tagList = (card.dataset.tags || "").toLowerCase().split(/\s+/).filter(Boolean);
+        var searchable = (card.dataset.search || "").toLowerCase();
+
+        /* category filter (multi-select OR) */
+        var catOk;
+        if (selectedCats.size === 0) {
+          catOk = true;
+        } else {
+          catOk = false;
+          for (var cat of selectedCats) {
+            if (cat === "etc") {
+              if (!tagList.some((t) => MAIN_CATS.has(t))) { catOk = true; break; }
+            } else {
+              if (tagList.includes(cat)) { catOk = true; break; }
+            }
+          }
+        }
+
+        /* tag filter (multi-select OR) */
+        var tagOk = selectedTags.size === 0 || tagList.some((t) => selectedTags.has(t));
+
+        /* search */
+        var queryOk = !query || searchable.includes(query);
+        if (catOk && tagOk && queryOk) matched.push(card);
         card.hidden = true;
       });
 
-      const totalPages = Math.max(1, Math.ceil(matched.length / PAGE_SIZE));
-      if (page > totalPages) page = totalPages;
-      const start = (page - 1) * PAGE_SIZE;
-      const end = start + PAGE_SIZE;
-      matched.slice(start, end).forEach((card) => {
-        card.hidden = false;
-      });
+      /* empty state */
+      if (emptyEl) emptyEl.hidden = matched.length > 0;
 
-      renderPagination(matched.length, page);
+      var ps = viewMode === "card" ? CARD_PAGE_SIZE : LIST_PAGE_SIZE;
+      var totalPages = Math.max(1, Math.ceil(matched.length / ps));
+      if (page > totalPages) page = totalPages;
+      var start = (page - 1) * ps;
+
+      if (viewMode === "card") {
+        if (listRoot) { listRoot.hidden = true; listRoot.classList.remove("view-enter"); }
+        if (cardGrid) {
+          cardGrid.hidden = false;
+          cardGrid.classList.remove("view-enter");
+          void cardGrid.offsetWidth;
+          cardGrid.classList.add("view-enter");
+        }
+        matched.slice(start, start + ps).forEach((c) => { c.hidden = false; });
+        [paginationTop, paginationRoot].forEach((el) => { if (el) el.classList.remove("pagination-centered"); });
+        renderPagination(matched.length, page, ps, false);
+      } else {
+        if (cardGrid) { cardGrid.hidden = true; cardGrid.classList.remove("view-enter"); }
+        if (listRoot) {
+          listRoot.hidden = false;
+          listRoot.classList.remove("view-enter");
+          void listRoot.offsetWidth;
+          listRoot.classList.add("view-enter");
+        }
+        renderListView(matched.slice(start, start + ps));
+        [paginationTop, paginationRoot].forEach((el) => { if (el) el.classList.add("pagination-centered"); });
+        renderPagination(matched.length, page, ps, true);
+      }
     }
 
+    /* ── category buttons (multi-select) ── */
     controls.forEach((button) => {
       if (button.dataset.bound === "1") return;
       button.dataset.bound = "1";
       button.addEventListener("click", () => {
-        controls.forEach((item) => item.setAttribute("aria-pressed", "false"));
-        button.setAttribute("aria-pressed", "true");
-        selected = (button.dataset.postFilter || "all").toLowerCase();
+        var f = (button.dataset.postFilter || "all").toLowerCase();
+        if (f === "all") {
+          selectedCats.clear();
+        } else {
+          selectedCats.has(f) ? selectedCats.delete(f) : selectedCats.add(f);
+          if (ALL_CATS.every((c) => selectedCats.has(c))) selectedCats.clear();
+        }
         page = 1;
+        updateCatButtons();
         apply();
       });
     });
 
+    /* ── tags toggle ── */
     if (otherToggle && otherTagsWrap && otherToggle.dataset.bound !== "1") {
       otherToggle.dataset.bound = "1";
       otherToggle.addEventListener("click", () => {
-        const expanded = otherToggle.getAttribute("aria-expanded") === "true";
+        var expanded = otherToggle.getAttribute("aria-expanded") === "true";
         otherToggle.setAttribute("aria-expanded", String(!expanded));
         otherTagsWrap.hidden = expanded;
       });
     }
 
+    /* ── view toggle (segmented) ── */
+    if (viewToggle) {
+      var segs = viewToggle.querySelectorAll(".post-view-seg");
+      /* restore saved state */
+      segs.forEach(function (s) { s.setAttribute("aria-pressed", String(s.dataset.viewVal === viewMode)); });
+
+      if (viewToggle.dataset.bound !== "1") {
+        viewToggle.dataset.bound = "1";
+        segs.forEach(function (seg) {
+          seg.addEventListener("click", function () {
+            viewMode = seg.dataset.viewVal || "card";
+            localStorage.setItem(VIEW_KEY, viewMode);
+            page = 1;
+            segs.forEach(function (s) { s.setAttribute("aria-pressed", String(s.dataset.viewVal === viewMode)); });
+            apply();
+          });
+        });
+      }
+    }
+
+    /* ── search ── */
     if (searchInput && searchInput.dataset.bound !== "1") {
       searchInput.dataset.bound = "1";
       searchInput.addEventListener("input", (e) => {
@@ -473,6 +607,7 @@
       });
     }
 
+    updateCatButtons();
     renderOtherTags();
     apply();
   }
@@ -480,13 +615,10 @@
   async function initSearchPage() {
     const input = document.getElementById("search-input");
     const results = document.getElementById("search-results");
+    const countEl = document.getElementById("search-count");
     if (!input || !results) return;
     if (input.dataset.bound === "1") return;
     input.dataset.bound = "1";
-
-    function normalize(value) {
-      return (value || "").toLowerCase();
-    }
 
     let records = [];
     try {
@@ -494,32 +626,107 @@
       if (!response.ok) throw new Error("index load failed");
       records = await response.json();
     } catch (_err) {
-      results.innerHTML = "<li>Failed to load search index.</li>";
+      results.innerHTML = '<div class="search-prompt">Failed to load search index.</div>';
       return;
     }
 
-    function render(query) {
-      const q = normalize(query);
-      const filtered = records.filter((item) => {
-        const haystack = normalize(`${item.title} ${item.description} ${(item.tags || []).join(" ")} ${(item.categories || []).join(" ")} ${item.content}`);
-        return haystack.includes(q);
-      });
-
-      results.innerHTML = "";
-      filtered.slice(0, 30).forEach((item) => {
-        const li = document.createElement("li");
-        li.innerHTML = `<a href="${item.url}">${item.title}</a><p>${item.description || ""}</p>`;
-        results.appendChild(li);
-      });
-
-      if (!filtered.length) {
-        const li = document.createElement("li");
-        li.textContent = "No results.";
-        results.appendChild(li);
-      }
+    function escapeHtml(str) {
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
     }
 
-    input.addEventListener("input", (e) => render(e.target.value));
+    function highlight(text, q) {
+      if (!q) return escapeHtml(text);
+      var safe = escapeHtml(text);
+      var re = new RegExp("(" + q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + ")", "gi");
+      return safe.replace(re, "<mark>$1</mark>");
+    }
+
+    function extractSnippet(content, q) {
+      if (!q || !content) return "";
+      var lower = content.toLowerCase();
+      var idx = lower.indexOf(q.toLowerCase());
+      if (idx === -1) return "";
+      var pad = 80;
+      var start = Math.max(0, idx - pad);
+      var end = Math.min(content.length, idx + q.length + pad);
+      var snippet = "";
+      if (start > 0) snippet += "...";
+      snippet += content.slice(start, end);
+      if (end < content.length) snippet += "...";
+      return snippet;
+    }
+
+    function detectMatchLocations(item, q) {
+      var locs = [];
+      var ql = q.toLowerCase();
+      if ((item.title || "").toLowerCase().includes(ql)) locs.push("title");
+      if ((item.description || "").toLowerCase().includes(ql)) locs.push("description");
+      if ((item.tags || []).join(" ").toLowerCase().includes(ql)) locs.push("tags");
+      if ((item.content || "").toLowerCase().includes(ql)) locs.push("content");
+      return locs;
+    }
+
+    function render(query) {
+      var q = (query || "").trim();
+      results.innerHTML = "";
+
+      if (!q) {
+        if (countEl) countEl.textContent = "";
+        results.innerHTML = '<div class="search-prompt">Type a keyword to search across all posts and notes.</div>';
+        return;
+      }
+
+      var ql = q.toLowerCase();
+      var filtered = records.filter(function (item) {
+        var haystack = ((item.title || "") + " " + (item.description || "") + " " + (item.tags || []).join(" ") + " " + (item.categories || []).join(" ") + " " + (item.content || "")).toLowerCase();
+        return haystack.includes(ql);
+      });
+
+      if (countEl) {
+        countEl.textContent = filtered.length + " result" + (filtered.length !== 1 ? "s" : "") + " found";
+      }
+
+      if (!filtered.length) {
+        results.innerHTML = '<div class="search-prompt">No results found for <strong>' + escapeHtml(q) + "</strong></div>";
+        return;
+      }
+
+      filtered.slice(0, 30).forEach(function (item) {
+        var article = document.createElement("article");
+        article.className = "post-card";
+
+        var titleHtml = highlight(item.title || "", q);
+        var descHtml = item.description ? highlight(item.description, q) : "";
+        var date = item.date || "";
+        var tags = (item.tags || []).map(function (t) { return '<li><a href="/tags/#tag-' + t + '">#' + t + "</a></li>"; }).join("");
+        var locs = detectMatchLocations(item, q);
+
+        var snippet = extractSnippet(item.content || "", q);
+        var snippetHtml = snippet ? '<p class="search-snippet">' + highlight(snippet, q) + "</p>" : "";
+
+        var badgesHtml = "";
+        if (locs.length) {
+          badgesHtml = '<div class="search-match-badges">' + locs.map(function (l) { return '<span class="search-badge search-badge--' + l + '">' + l + "</span>"; }).join("") + "</div>";
+        }
+
+        article.innerHTML =
+          badgesHtml +
+          '<h3><a href="' + (item.url || "#") + '">' + titleHtml + "</a></h3>" +
+          (descHtml ? "<p>" + descHtml + "</p>" : "") +
+          snippetHtml +
+          '<p class="meta">' + escapeHtml(date) + "</p>" +
+          (tags ? '<ul class="chip-list">' + tags + "</ul>" : "");
+
+        results.appendChild(article);
+      });
+    }
+
+    var debounceTimer = null;
+    input.addEventListener("input", function (e) {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(function () { render(e.target.value); }, 150);
+    });
+
     render("");
   }
 
@@ -529,10 +736,25 @@
     if (!toggle || !menu || toggle.dataset.bound === "1") return;
     toggle.dataset.bound = "1";
 
+    function closeMenu() {
+      toggle.setAttribute("aria-expanded", "false");
+      menu.classList.remove("open");
+    }
+
     toggle.addEventListener("click", () => {
       const expanded = toggle.getAttribute("aria-expanded") === "true";
       toggle.setAttribute("aria-expanded", String(!expanded));
       menu.classList.toggle("open", !expanded);
+    });
+
+    menu.querySelectorAll("a").forEach((link) => {
+      link.addEventListener("click", closeMenu);
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!toggle.contains(e.target) && !menu.contains(e.target)) {
+        closeMenu();
+      }
     });
   }
 
