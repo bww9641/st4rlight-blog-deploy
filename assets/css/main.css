@@ -686,6 +686,7 @@ html[data-theme=dark] .post-content .hljs-template-string {
   border-radius: 1rem;
   padding: 0.8rem;
   height: fit-content;
+  order: -1;
 }
 
 .toc-shell nav {
@@ -1979,6 +1980,7 @@ html[data-theme=dark] .award-phase {
   .toc-shell {
     position: sticky;
     top: 5.5rem;
+    order: 0;
   }
   .toc-toggle {
     display: none;
