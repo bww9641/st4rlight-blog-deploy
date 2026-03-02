@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://st4rlight.github.io/sitemap.xml
+Sitemap: https://st4rlight.live/sitemap.xml
